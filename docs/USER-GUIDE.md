@@ -523,7 +523,7 @@ actuator-verification-sil/
 │   ├── test_part_c_actuator_faults.py <- R11-R13
 │   ├── test_model_bench_actuator.py   <- M1 (L16-P model vs datasheet)
 │   └── test_bench_link.py             <- L1-L3 (real Pi over Ethernet: replay + live monitor)
-├── tools/make_figures.py        <- presentation plots, drawn only from reports/data/ of the record run
+├── tools/make_figures.py        <- report plots, drawn only from reports/data/ of the record run
 ├── tools/predict_bench.py       <- predicted L16-P bench results
 ├── tools/pi_channel_a.py        <- runs on the Raspberry Pi: channel A sender
 ├── tools/bench_capture.py       <- runs on the laptop: records channel A

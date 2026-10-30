@@ -1,6 +1,19 @@
-# Actuator Verification SIL
+# Flight Actuator Verification
 
 [![SIL regression](https://github.com/taylorp-dev/flight-actuator-verification/actions/workflows/ci.yml/badge.svg)](https://github.com/taylorp-dev/flight-actuator-verification/actions/workflows/ci.yml)
+
+Requirements-based verification of a flight-class electromechanical actuator (EMA) and the triplex ARINC 429 sensor chain that commands it, in Python and pytest, with a first step onto real hardware: one sensor channel on a Raspberry Pi over Ethernet.
+
+- 24 requirements, 136 automated tests, and a traceability matrix stamped with the git commit and config fingerprint. Tests run on every push.
+- Fault injection: 9 sensor fault types × 3 channels, plus motor loss, jam and force fight inside the actuator.
+- 5 findings with root cause, including an integrator windup that passed small-step acceptance and failed only under rated load.
+- Real Raspberry Pi link: an automated cable-pull test, live checks every 1 ms compared against replay, and 15 live runs.
+- Every figure is drawn from the run for record, and every number traces to a saved test report ([docs/EVIDENCE.md](docs/EVIDENCE.md)).
+
+Built with an AI coding assistant; see [How it was built](#how-it-was-built).
+
+![Reconfiguration transient: passes unloaded, fails at rated load, fixed with anti-windup](reports/figures/finding_loaded_vs_unloaded.png)
+
 
 EMA characterization, triplex ARINC 429 sensor fault response, and actuator-level faults, in a Python/pytest **software-in-the-loop** (SIL here means software-in-the-loop, not a hardware Systems Integration Lab; this is the software step that comes before one).
 
@@ -44,7 +57,7 @@ EMA characterization, triplex ARINC 429 sensor fault response, and actuator-leve
 | **Test flow** diagrams: how a unit, system and bench test runs, start to finish | [docs/TEST-FLOW.md](docs/TEST-FLOW.md) |
 | **Tier 1 rig overview**: built vs to build, and how the parts work together end to end | [docs/RIG-OVERVIEW.md](docs/RIG-OVERVIEW.md) |
 | Full test run log (every test name and result) | [reports/test_log.txt](reports/test_log.txt) |
-| **Evidence map**: every figure and slide number, which test produced it, which data file, which run | [docs/EVIDENCE.md](docs/EVIDENCE.md) |
+| **Evidence map**: every figure and number, which test produced it, which data file, which run | [docs/EVIDENCE.md](docs/EVIDENCE.md) |
 | Plot data from the run for record (one CSV per plotted series, stamped with test, result, commit, config) | [reports/data/](reports/data/) |
 | Requirements, full text | [requirements/requirements.yaml](requirements/requirements.yaml) |
 | Test cases: actuator acceptance (A1-A6) | [tests/test_part_a_actuator.py](tests/test_part_a_actuator.py) |
@@ -105,7 +118,7 @@ python -m pytest tests/test_bench_link.py --live -v   # drive the real Raspberry
 | `docs/procedures/` | Test procedures for every test (index: `README.md`), plus the lab-rig style TP-A4 |
 | `docs/rca/` | RCA-001 and FINDING-002 to FINDING-005 |
 | `docs/REFERENCES.md` | Public sources used to size and scope the project |
-| `tools/make_figures.py` | Presentation figures, drawn only from the data the tests saved in the run for record (`reports/data/`); refuses otherwise |
+| `tools/make_figures.py` | Report figures, drawn only from the data the tests saved in the run for record (`reports/data/`); refuses otherwise |
 | `tools/predict_bench.py` | Predicted results for the desk-rig actuator (L16-P) |
 | `tools/pi_channel_a.py` | Runs on the Raspberry Pi: channel A sender over Ethernet |
 | `tools/bench_capture.py` | Runs on the laptop: live receiver status + recording to `bench_data/` |

@@ -1,4 +1,4 @@
-"""Draw the presentation figures from the data the tests saved in the run for record.
+"""Draw the report figures from the data the tests saved in the run for record.
 
     python tools/make_figures.py                 -> reports/figures/*.png, from reports/data/
     python tools/make_figures.py --dev           preview from reports/dev/data/ (any run that is
@@ -19,7 +19,7 @@ Figures are drawn into a staging folder first; the figure set is replaced only
 if every figure drew, so a refusal never leaves a mix of old and new figures.
 
 Each figure's footer names the data files, the commit and the config hash, so a
-slide traces to a run, and docs/EVIDENCE.md lists which test produced which file.
+figure traces to a run, and docs/EVIDENCE.md lists which test produced which file.
 """
 
 from __future__ import annotations

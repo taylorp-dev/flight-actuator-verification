@@ -93,7 +93,7 @@ flowchart TD
 
 Timing is real, with network jitter. It proves the logic still works with messy real timing and a real link loss.
 
-**Why capture and check are separate:** one capture feeds all seven bench tests; anyone (GitHub CI, a laptop at an interview) can re-check real Pi data without the Pi; and the recording, with its header, is kept as evidence. A replay alone re-checks old data; the run for record starts with a fresh live run.
+**Why capture and check are separate:** one capture feeds all seven bench tests; anyone (GitHub CI, any laptop) can re-check real Pi data without the Pi; and the recording, with its header, is kept as evidence. A replay alone re-checks old data; the run for record starts with a fresh live run.
 
 **The three levels on one requirement (R3, stale detection):** the unit test checks the logic with perfect timing, the system fault matrix checks the whole loop rides through a dropout, and the bench cable pull checks it on a real link. Each level catches something the one below can't.
 

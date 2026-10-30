@@ -31,7 +31,7 @@ A test saves its data before its pass/fail checks, so a failing or open-defect c
 
 For the parametrized tests that run many cases (jam at 6 start points and loads, 15 force-fight fault cases), only the case a figure shows saves plot data, to keep the repo small. Every case's measured values are in the traceability matrix.
 
-## Numbers quoted in the README, the procedures and talks
+## Numbers quoted in the README and the procedures
 
 | Kind of number | Where it comes from |
 | --- | --- |
