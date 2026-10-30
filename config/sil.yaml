@@ -1,0 +1,131 @@
+# SIL configuration under version control. The test report records a hash of
+# this file, so every result traces to the exact configuration that produced it.
+# All numbers are representative, not any real aircraft's values.
+
+actuator:
+  stroke_mm: 25.0
+  v0_mm_s: 40.0
+  stall_force_n: 6500.0     # sized to a representative >1,000 lbf flight-control EMA class (x6.5 of the original 1,000 N)
+  kp: 15.0
+  ki: 30.0
+  tau_motor_s: 0.010
+  backlash_mm: 0.10
+  damping_n_s_per_mm: 13000.0  # scaled with stall force so load/stall behavior is unchanged
+  supply_v_nominal: 28.0
+  anti_windup: false        # baseline design; RCA-001 corrective action sets true
+  n_motors: 2               # two motors summing torque on one screw (stall force above is the total)
+
+load_conditions:            # used as a pytest fixture parameter
+  unloaded: 0.0
+  rated: 4550.0             # rated opposing load, N (~1,020 lbf; 70% of stall)
+
+actuator_spec:              # Part A acceptance limits
+  A1_rise_time_max_s: 0.15
+  A1_overshoot_max_pct: 10.0
+  A1_step_mm: 1.0
+  A2_rate_min_unloaded_mm_s: 35.0
+  A2_rate_min_rated_mm_s: 10.0
+  A3_accuracy_max_mm: 0.10
+  A3_backlash_max_mm: 0.15
+  A4_bandwidth_min_hz: 2.5
+  A5_overshoot_max_pct: 10.0
+  A5_rise_time_max_s: 0.15
+
+icd:                        # airframe interface control document (labels)
+  airframe: "Generic Rotorcraft A"
+  labels:
+    pitch: {label_octal: "324", range_units: 180.0, sig_bits: 14, min_valid: -90.0, max_valid: 90.0, rate_hz: 50.0}
+    roll:  {label_octal: "325", range_units: 180.0, sig_bits: 14, min_valid: -180.0, max_valid: 180.0, rate_hz: 50.0}
+  stale_intervals: 3
+
+sensors:
+  noise_sd_deg: 0.02
+  phase_offsets_s: [0.000, 0.007, 0.013]   # channels are asynchronous
+  # Worst-case healthy tolerance stack: A high, C low, both within +/-1.0 deg spec
+  bias_deg: [1.0, 0.0, -1.0]
+
+voter:
+  # Was 2.0 (= exactly 2 x sensor tolerance). First fault-matrix run isolated the
+  # WRONG channel: with A at +1.0 and C at -1.0, a frozen middle channel made A-C
+  # sit right at threshold and noise tripped a healthy channel. See FINDING-002.
+  threshold_deg: 2.5        # = 2 x sensor tolerance + 0.5 deg margin for noise and latency
+  tolerance_deg: 1.0        # healthy sensor accuracy spec (used by the margin check)
+  persistence_s: 0.10
+  frame_s: 0.02
+
+command_law:
+  gain_mm_per_deg: 4.0
+  target_deg: 0.0
+  pos_limit_mm: 22.0
+  rate_limit_mm_s: 60.0
+
+actuator_monitor:           # Part C: tracking monitor in the actuator controller (R12)
+  # Sized from the measured healthy envelope: 0.66 mm worst case across every Part B
+  # sensor fault at loads from 0 to rated, WITH the RCA-001 anti-windup fix. Without
+  # that fix the healthy envelope reaches 5.6 mm at ~75 % load and no threshold works.
+  # First try was 0.5 mm. See FINDING-005.
+  err_threshold_mm: 1.0     # commanded vs own-feedback position
+  margin_min_mm: 0.25       # guard test: threshold must clear the healthy envelope by this
+  vel_threshold_mm_s: 2.0   # "not moving"; a rate-limited move is >= 11 mm/s, so it can't trip this
+  envelope_load_fractions: [0.0, 0.5, 0.75, 1.0]   # loads swept by the false-alarm test
+  persistence_s: 0.10
+  vel_window_s: 0.02
+
+force_fight:                # Part C: three lanes active/active on one surface (R13)
+  kp_n_per_mm: 1000.0
+  ki_n_per_mm_s: 5000.0
+  kd_n_s_per_mm: 11.0
+  surface_mass_kg: 200.0
+  lane_force_max_n: 6500.0  # each lane is one flight-class actuator
+  load_n: 4550.0            # rated load, shared by the lanes
+  eq_gain_mm_per_n: 0.001   # force equalization; 0 turns it off
+  rig_offsets_mm: [0.2, 0.0, -0.2]   # worst-case healthy rigging/sensor tolerance stack (+/-0.2 mm)
+  monitor_threshold_n: 1000.0
+  monitor_persistence_s: 0.20
+  isolate_largest_only: true   # FINDING-004: false disengaged all three lanes on a large fault
+  dt_s: 0.0005
+
+system_spec:                # Part B system-level limits
+  R9_overshoot_max_mm: 0.60
+  R9_settle_band_mm: 0.25
+  R9_settle_time_max_s: 0.80
+  R11_hold_max_mm: 0.50     # position hold after losing one motor channel
+  R11_hold_s: 5.0
+  R12_detect_max_s: 0.30    # jam annunciation latency, command moving
+  R12_cmd_rate_mm_s: 10.0
+  R13_fight_max_n: 500.0    # healthy lanes, equalization on
+  R13_undetected_err_max_mm: 0.60   # a lane fault too small to detect must stay this small at the surface
+  R13_final_err_max_mm: 0.25        # after the faulty lane is disengaged
+
+bench_link:                 # real Pi link (L1, L2)
+  # Live checks run during the capture every check period (L2). Live vs replay of
+  # the same recording must agree within tol. Budget: replay 1 ms step + live
+  # check period 1 ms + Windows scheduling delay (word jitter up to 2.5 ms
+  # measured 2026-10-16) = about 5 ms. Ceiling from the 4:1 rule: 60 ms stale
+  # limit / 4 = 15 ms.
+  live_check_period_s: 0.001
+  live_vs_replay_tol_ms: 5.0
+
+# Bench actuator for the desk rig (next step, not built yet). Parameters come from
+# the Actuonix L16 datasheet, 35:1 gear, 12 V, 100 mm stroke. The model gives the
+# PREDICTIONS the bench results will be compared against (model correlation).
+# Items marked "assumed" are not on the datasheet; the bench run measures them.
+bench_actuator_l16p:
+  params:
+    stroke_mm: 50.0               # 100 mm stroke, +/-50 mm about mid-stroke
+    v0_mm_s: 32.0                 # datasheet: max speed, no load
+    stall_force_n: 100.0          # linear fit through datasheet points (50 N @ 16 mm/s, 24 N @ 24 mm/s)
+    kp: 15.0                      # same controller as the flight-class profile (runs on the Teensy)
+    ki: 30.0
+    tau_motor_s: 0.020            # assumed: small brushed DC motor, slower than flight class
+    backlash_mm: 0.25             # datasheet: mechanical backlash
+    damping_n_s_per_mm: 100.0     # assumed: back-drive behavior (datasheet back-drive force 31 N)
+    supply_v_nominal: 12.0        # datasheet: 12 VDC
+    anti_windup: false
+  bench_load_n: 35.0              # spring load on the desk rig, 70% of the 50 N datasheet max lifted force
+  datasheet:                      # points the model must reproduce (requirement M1)
+    no_load_speed_mm_s: 32.0
+    points_n_mm_s: [[50.0, 16.0], [24.0, 24.0]]   # peak power, peak efficiency
+    backlash_mm: 0.25
+    repeatability_mm: 0.3
+    tolerance_pct: 5.0

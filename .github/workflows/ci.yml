@@ -1,0 +1,33 @@
+name: SIL regression
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:     # "Run workflow" button: full suite on GitHub's machines, no Pi needed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run SIL test suite (log + JUnit XML + traceability matrix)
+        run: python tools/run_tests.py
+      - name: Draw figures from this run's saved data (run_tests.py also tries; this shows any refusal)
+        if: always()
+        run: python tools/make_figures.py
+      - name: Publish traceability matrix to the job summary
+        if: always()
+        run: |
+          cat reports/traceability.md >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 25 reports/test_log.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sil-test-report
+          path: reports/

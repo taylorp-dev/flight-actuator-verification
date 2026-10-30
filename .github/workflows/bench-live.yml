@@ -1,0 +1,65 @@
+name: Bench live (Raspberry Pi)
+
+# Runs the bench-link tests against the REAL Raspberry Pi, on a self-hosted
+# runner on the PC that's cabled to it. Manual trigger only (Actions tab ->
+# "Bench live (Raspberry Pi)" -> Run workflow), so normal pushes never wait
+# for hardware. Setup: docs/BENCH-GUIDE.md, "GitHub button".
+
+on:
+  workflow_dispatch:
+    inputs:
+      pi:
+        description: "SSH target for the Pi (control path)"
+        default: "taylor@192.168.2.1"
+      data_host:
+        description: "This PC's IP on the cable to the Pi (where the Pi sends words)"
+        default: "192.168.2.10"
+      drop_at:
+        description: "Seconds into the run to take the Pi's Ethernet link down"
+        default: "15"
+      drop_for:
+        description: "Seconds the link stays down"
+        default: "5"
+
+jobs:
+  live:
+    runs-on: [self-hosted, windows, pi-bench]
+    timeout-minutes: 10
+    # Skip the user's PowerShell profile (it may change folders or print things),
+    # and start every step from the checked-out repo.
+    defaults:
+      run:
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python environment
+        run: |
+          Set-Location $env:GITHUB_WORKSPACE
+          python -m venv .venv-ci
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          .venv-ci\Scripts\python -m pip install -q --disable-pip-version-check -r requirements.txt
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+      - name: Live bench test (drives the Pi, automated link drop)
+        run: >
+          Set-Location $env:GITHUB_WORKSPACE;
+          .venv-ci\Scripts\python -m pytest tests/test_bench_link.py --live
+          --pi ${{ inputs.pi }} --data-host ${{ inputs.data_host }}
+          --drop-at ${{ inputs.drop_at }} --drop-for ${{ inputs.drop_for }} -v;
+          exit $LASTEXITCODE
+
+      - name: Publish results to the job summary
+        if: always()
+        run: |
+          Set-Location $env:GITHUB_WORKSPACE
+          # bench tests alone are a partial run, so their matrix is in reports/dev/ (not for record)
+          if (Test-Path reports/dev/traceability.md) { Get-Content reports/dev/traceability.md | Add-Content $env:GITHUB_STEP_SUMMARY }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bench-live-${{ github.run_number }}
+          path: |
+            bench_data/
+            reports/

@@ -1,0 +1,69 @@
+# Requirements under test. Representative "shall" statements for a generic
+# fly-by-wire actuator and sensor-input chain. Limits live in config/sil.yaml.
+
+ICD-1:
+  stage: Interface
+  text: ARINC 429 BNR words shall be encoded per the ICD (label, SDI, sign, resolution, SSM, odd parity).
+A1:
+  stage: Actuator
+  text: Small-signal step response (1 mm, unloaded) shall have rise time <= 0.15 s and overshoot <= 10 %.
+A2:
+  stage: Actuator
+  text: Maximum rate shall be >= 35 mm/s unloaded and >= 10 mm/s at rated opposing load.
+A3:
+  stage: Actuator
+  text: Static position accuracy shall be <= 0.10 mm and backlash <= 0.15 mm, measured at the output rod.
+A4:
+  stage: Actuator
+  text: Position bandwidth (-3 dB) shall be >= 2.5 Hz.
+A5:
+  stage: Actuator
+  text: At rated opposing load, small-signal step overshoot shall be <= 10 %, rise time <= 0.15 s, accuracy <= 0.10 mm.
+M1:
+  stage: Model
+  text: The bench actuator model (Actuonix L16-P) shall reproduce the manufacturer datasheet speed-force points within 5 % and use the datasheet backlash.
+R1:
+  stage: Receiver
+  text: The receiver shall reject words with bad parity.
+R2:
+  stage: Receiver
+  text: The receiver shall treat SSM Failure Warning or No Computed Data as invalid.
+R3:
+  stage: Receiver
+  text: The receiver shall declare a label stale if not updated within 3 nominal transmit intervals.
+R4:
+  stage: Receiver
+  text: The receiver shall reject values outside the physical range.
+R5:
+  stage: Voter
+  text: With three valid sources, the voter shall output the middle value.
+R6:
+  stage: Voter
+  text: The voter shall fail a channel that miscompares beyond threshold for longer than the persistence time.
+R7:
+  stage: Voter
+  text: The voter shall not fail a channel on a single short spike.
+R8:
+  stage: Voter
+  text: After one channel failure, the voter shall continue on the remaining two and annunciate.
+R9:
+  stage: System
+  text: After a single-channel failure, the actuator reconfiguration transient shall overshoot <= 0.60 mm and settle within +/-0.25 mm in <= 0.80 s.
+R10:
+  stage: System
+  text: The actuator command shall never exceed the position or rate limits, whatever the input.
+L1:
+  stage: Bench link
+  text: Channel A sent from a separate computer over a real Ethernet link shall decode per the ICD, arrive at the nominal label rate (mean interval within 2 %) without gaps long enough to trip the stale check, and a link loss shall be flagged stale within 3 intervals and recover automatically.
+L2:
+  stage: Bench link
+  text: The bench link checks shall also run live, during the capture, and the live results shall agree with the replay of the same recording (same words, fingerprint of the saved recording; no decode errors; no false stale anywhere outside the link drop; stale flag and recovery times within 5 ms).
+R11:
+  stage: Actuator fault
+  text: After loss of one of two motor channels, the actuator shall hold commanded position within 0.50 mm for 5 s at every load condition up to rated.
+R12:
+  stage: Actuator fault
+  text: The actuator monitor shall annunciate a jam within 0.30 s while the command is moving, remove motor drive, and not annunciate during normal operation (including rate-limited moves at rated load and all Part B fault cases).
+R13:
+  stage: Actuator fault
+  text: With three lanes active on one surface, equalization shall keep force fight between healthy lanes <= 500 N; a faulty lane shall be disengaged (only that lane) with surface error <= 0.25 mm after; a lane fault too small to detect shall cause <= 0.60 mm surface error.

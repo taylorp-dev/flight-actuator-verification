@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "recorded_utc": "2026-10-19T16:12:43+00:00",
+    "mode": "live, automated (pytest --live)",
+    "sender": "192.168.2.1",
+    "pi_ssh": "taylor@dronepi.local",
+    "pi_code": "unknown (git pull failed: fatal: not a git repository (or any of the parent directories): .git)",
+    "receiver_host": "razor",
+    "receiver_os": "Windows 11",
+    "link": "direct Ethernet cable, UDP, one ARINC 429 word per datagram",
+    "link_drop": "Pi eth0 down at 15 s for 5 s (ip link set)",
+    "recorded_s": 32.0,
+    "config_sha256_12": "baae11ef69bb",
+    "capture": "live_monitor",
+    "note": "results of the checks made live during the cable_pull run"
+  },
+  "results": {
+    "words": 2321,
+    "decode_errors": {
+      "label_not_in_icd": 0,
+      "parity": 0,
+      "sdi_not_1": 0,
+      "ssm_not_normal": 0
+    },
+    "pitch_words": 1161,
+    "pitch_mean_deg": -0.999,
+    "words_sha256": "fc4c4a3c12e8b34314709bb790dc3c1608e7ca92d899426772fd05084b4075d6",
+    "checks": 10816,
+    "check_period_ms": 1.0,
+    "max_check_gap_ms": 20.61,
+    "transitions": [
+      {
+        "t_s": 0.000113,
+        "valid": true,
+        "reasons": []
+      },
+      {
+        "t_s": 14.921472,
+        "valid": false,
+        "reasons": [
+          "stale"
+        ]
+      },
+      {
+        "t_s": 23.682591,
+        "valid": true,
+        "reasons": []
+      }
+    ],
+    "false_stale_outside_drop": 0,
+    "link_drop": {
+      "last_word_s": 14.860419,
+      "first_word_back_s": 23.682486,
+      "cable_out_s": 8.82,
+      "flagged_after_ms": 61.1,
+      "recovered_after_reconnect_ms": 0.1
+    }
+  }
+}
