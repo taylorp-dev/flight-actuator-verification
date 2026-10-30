@@ -66,11 +66,11 @@ def test_r2_ssm_normal_valid(rx, labels):
 
 
 @pytest.mark.req("R3")
-def test_r3_stale_boundary(rx, labels, record_property):
+def test_r3_stale_boundary(cfg, rx, labels, record_property):
     """Valid at exactly 3 intervals after the last word, stale just after."""
     ld = labels["pitch"]
     rx.receive("pitch", encode_bnr(ld, 5.0), 0.0)
-    limit = 3 / ld.rate_hz
+    limit = cfg["icd"]["stale_intervals"] / ld.rate_hz
     record_property("stale_limit_ms", round(limit * 1000, 1))
     assert rx.read("pitch", limit)[0]
     valid, _, reasons = rx.read("pitch", limit + 0.001)

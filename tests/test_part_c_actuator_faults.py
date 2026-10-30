@@ -30,9 +30,10 @@ def make_ema(cfg, load_n=0.0):
 
 
 # ------------------------------------------------------------------- R11
-def motor_loss_run(cfg, load_n, t_fail=1.0, duration_s=None):
+def motor_loss_run(cfg, load_n, t_fail=None, duration_s=None):
     """Hold position 0, lose one motor at t_fail, watch the rod for R11_hold_s."""
     spec = cfg["system_spec"]
+    t_fail = spec["R11_fail_at_s"] if t_fail is None else t_fail
     duration_s = duration_s or t_fail + spec["R11_hold_s"]
     ema = make_ema(cfg, load_n)
     ema.reset(0.0)
@@ -50,14 +51,15 @@ def motor_loss_run(cfg, load_n, t_fail=1.0, duration_s=None):
 
 def r11_check(cfg, load_n, record_property, plot_data=None, name=None):
     spec = cfg["system_spec"]
+    t_fail = spec["R11_fail_at_s"]
     t, x, mon, ema = motor_loss_run(cfg, load_n)
-    dev = float(np.max(np.abs(x[t >= 1.0])))
+    dev = float(np.max(np.abs(x[t >= t_fail])))
     record_property("load_n", load_n)
     record_property("stall_after_loss_n", round(ema.stall_force_effective))
     record_property("max_deviation_mm", round(dev, 3))
-    record_property("monitor_trip_after_s", None if mon.trip_t is None else round(mon.trip_t - 1.0, 2))
+    record_property("monitor_trip_after_s", None if mon.trip_t is None else round(mon.trip_t - t_fail, 2))
     if plot_data is not None:            # saved before the check, so the failing case is kept too
-        plot_data.save(name, {"t_s": t, "rod_mm": x}, load_n=load_n, t_fail_s=1.0,
+        plot_data.save(name, {"t_s": t, "rod_mm": x}, load_n=load_n, t_fail_s=t_fail,
                        stall_after_loss_n=ema.stall_force_effective, max_deviation_mm=dev,
                        monitor_trip_t_s=mon.trip_t, hold_limit_mm=spec["R11_hold_max_mm"])
     assert dev <= spec["R11_hold_max_mm"]
@@ -81,11 +83,12 @@ def test_r11_if_position_is_lost_it_is_annunciated(cfg, load_condition, record_p
     """Whenever the actuator can't hold after a motor loss, the tracking monitor
     must say so (it must never drift silently)."""
     name, load_n = load_condition
+    t_fail = cfg["system_spec"]["R11_fail_at_s"]
     t, x, mon, _ = motor_loss_run(cfg, load_n)
-    drifted = float(np.max(np.abs(x[t >= 1.0]))) > cfg["actuator_monitor"]["err_threshold_mm"]
+    drifted = float(np.max(np.abs(x[t >= t_fail]))) > cfg["actuator_monitor"]["err_threshold_mm"]
     record_property("load", name)
     record_property("drifted_past_threshold", drifted)
-    record_property("monitor_trip_after_s", None if mon.trip_t is None else round(mon.trip_t - 1.0, 2))
+    record_property("monitor_trip_after_s", None if mon.trip_t is None else round(mon.trip_t - t_fail, 2))
     assert mon.tripped == drifted
 
 

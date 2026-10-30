@@ -44,7 +44,7 @@ Only two files run. Timing is exact and made up by the test. It proves the logic
 
 ## 3. System test
 
-The whole loop runs inside one call, `run_scenario()` in `sil/sim.py`, ticking every millisecond. The test describes a fault, runs the loop, then checks the results. Example: the fault matrix (8 faults x 3 channels).
+The whole loop runs inside one call, `run_scenario()` in `sil/sim.py`, ticking every millisecond. The test describes a fault, runs the loop, then checks the results. Example: the fault matrix (9 faults x 3 channels).
 
 ```mermaid
 flowchart TD

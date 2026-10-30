@@ -30,7 +30,7 @@ At mid loads the actuator is rate-limited during normal maneuvering but not stal
 
 - **Prerequisite:** adopt the RCA-001 anti-windup fix. With it, the healthy envelope is 0.66 mm at every load.
 - Threshold set from that data: 0.66 mm + margin = **1.0 mm** (`config/sil.yaml`).
-- `test_r12_no_false_alarm_across_part_b_faults` runs all 48 fault cases at 0, 50, 75 and 100 % of rated load on the corrected actuator, and fails if the margin drops below 0.25 mm (currently 0.34 mm).
+- `test_r12_no_false_alarm_across_part_b_faults` runs all 54 fault cases (9 Part B fault kinds x 3 channels x maneuvering and steady; 48 before `ssm_ncd` was added) at 0, 50, 75 and 100 % of rated load on the corrected actuator, and fails if the margin drops below 0.25 mm (currently 0.34 mm).
 - `test_r12_no_false_alarm_baseline_actuator` keeps the baseline case as a strict xfail. It closes when RCA-001's fix is adopted.
 
 ## Lessons

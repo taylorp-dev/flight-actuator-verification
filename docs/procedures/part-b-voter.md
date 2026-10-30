@@ -2,7 +2,7 @@
 
 These tests cover the triplex mid-value-select voter, requirements R5 to R8. They are Unit tests: the voter (`sil/voter.py`) is tested alone, and the test feeds it one frame of three channel values at a time. All tests are in `tests/test_part_b_voter.py`.
 
-| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit d716c1f) |
+| TC | Requirement(s) | Test function | Cases | Last result (run for record) |
 |---|---|---|---|---|
 | [TC-R5-U01](#tc-r5-u01-voter-outputs-the-middle-of-three-values) | R5 | `test_r5_mid_value_select` | 6 | PASS |
 | [TC-R6-U01](#tc-r6-u01-channel-fails-only-after-the-full-persistence-time) | R6 | `test_r6_fail_after_persistence` | 1 | PASS |
@@ -82,7 +82,7 @@ Note: the outer values are 1.0° and 0.8° from the middle, both inside the 2.5�
 
 **Pass criteria:** every case gives its expected result. Each check is an `assert`; if any one fails, that case fails.
 
-**Last result (run for record, commit d716c1f):** PASS, 6 of 6 cases (no measured values recorded).
+**Last result (run for record):** PASS, 6 of 6 cases (no measured values recorded).
 
 ---
 
@@ -120,7 +120,7 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 
 **Pass criteria:** every step gives its expected result. Each check is an `assert`; if any one fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS. `frames_to_latch` = 5.
+**Last result (run for record):** PASS. `frames_to_latch` = 5.
 
 ---
 
@@ -152,11 +152,11 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 | 1 | Read the voter settings | `v = cfg["voter"]` | Settings available | 45 |
 | 2 | Margin = threshold minus 2 x tolerance = 2.5 − 2 x 1.0 | `margin = v["threshold_deg"] - 2 * v["tolerance_deg"]` | `margin` = 0.5° (from `voter.threshold_deg` and `voter.tolerance_deg`) | 46 |
 | 3 | Record the margin in the report, rounded to 2 places | `record_property("margin_deg", round(margin, 2))` | Saved as `margin_deg` | 47 |
-| 4 | Check the margin is at least 0.25° | `assert margin >= 0.25` | `True`: 0.5° ≥ 0.25°. The 0.25° minimum is written in the test itself, not in `config/sil.yaml` | 48 |
+| 4 | Check the margin is at least 0.25° | `assert margin >= cfg["voter"]["margin_min_deg"]` | `True`: 0.5° ≥ 0.25° (minimum from `voter.margin_min_deg`) | 48 |
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS. `margin_deg` = 0.5.
+**Last result (run for record):** PASS. `margin_deg` = 0.5.
 
 ---
 
@@ -193,7 +193,7 @@ Note: B and C are 4.95° apart from each other. That does not matter in TRIPLEX,
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -229,7 +229,7 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -266,7 +266,7 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -306,7 +306,7 @@ Note: A and C differ by 2.0°, inside the 2.5° threshold, so `DUAL_MISCOMPARE` 
 
 **Pass criteria:** every step gives its expected result. Each check is an `assert`; if any one fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -342,7 +342,7 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -378,4 +378,4 @@ Note: this test does not check annunciations. B is not latched failed here (it i
 
 **Pass criteria:** every step gives its expected result. The check is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).

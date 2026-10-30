@@ -29,6 +29,7 @@ FAULTS = {
     "spike":        (15.0,  "ignore",  ["R7"]),
     "bad_parity":   (0.0,   "exclude", ["R1", "R8"]),
     "ssm_fail":     (0.0,   "exclude", ["R2", "R8"]),
+    "ssm_ncd":      (0.0,   "exclude", ["R2", "R8"]),
     "dropout":      (0.0,   "exclude", ["R3", "R8"]),
     "out_of_range": (120.0, "exclude", ["R4", "R8"]),
 }
@@ -58,15 +59,23 @@ def test_fault_matrix(cfg, kind, channel, record_property, request, plot_data):
                    max_voted_error_deg=err, final_mode=run.mode[-1].value)
 
     # the bad channel never drives the voted value outside the healthy tolerance band
-    # (+0.35 deg allowance for sample/frame latency during the maneuver)
-    assert err <= cfg["voter"]["tolerance_deg"] + 0.35
+    # (plus an allowance for sample/frame latency during the maneuver)
+    assert err <= cfg["voter"]["tolerance_deg"] + cfg["voter"]["latency_allowance_deg"]
+    ann = run.annunciations
+    record_property("annunciations", ",".join(sorted(ann)) or "none")
     if expect == "isolate":
         assert run.failed == {channel} and run.mode[-1].value == "DUAL"
+        # R8: continue on two and annunciate which channel failed
+        assert f"CHANNEL_FAILED:{'ABC'[channel]}" in ann and "DEGRADED_DUAL" in ann
     elif expect == "ignore":
         assert not run.failed and run.mode[-1].value == "TRIPLEX"
+        # R7: a spike must not raise any failure or degraded-mode annunciation
+        assert not any(a.startswith(("CHANNEL_FAILED", "DEGRADED")) for a in ann)
     else:  # receiver-level exclusion: voter never needs to latch it
         assert not run.failed and not run.valid[-1, channel]
         assert run.mode[-1].value == "DUAL"
+        # R8: degraded mode is annunciated; nothing is latched failed
+        assert "DEGRADED_DUAL" in ann and not any(a.startswith("CHANNEL_FAILED") for a in ann)
     # R10 holds through every fault
     law = cfg["command_law"]
     assert np.max(np.abs(run.cmd)) <= law["pos_limit_mm"] + 1e-9

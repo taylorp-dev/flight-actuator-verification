@@ -17,19 +17,19 @@ EMA characterization, triplex ARINC 429 sensor fault response, and actuator-leve
          +------------------------------ pytest: fixtures, fault matrix, req markers -----------------------+
 ```
 
-- **Part A, actuator acceptance (A1-A5):** step response, max rate, accuracy and backlash, bandwidth, performance at rated load. Measured at the output rod, never the unit's own feedback.
+- **Part A, actuator acceptance (A1-A6):** small (1 mm) and large (4 mm) step response, max rate in both directions, accuracy and backlash, bandwidth, performance at rated load. Measured at the output rod, never the unit's own feedback.
 - **Part B, system fault response (ICD-1, R1-R10):** receiver validity checks, voter isolation, then the effect of each fault at the actuator.
 - **Part C, actuator faults (R11-R13):** loss of one of two motor channels, jam detection by a tracking monitor, and force fight between three lanes active on one surface (equalization and faulty-lane disengage).
-- **Bench link (L1, L2):** first step off pure simulation. Channel A runs on a Raspberry Pi, a separate computer, and sends its ARINC 429 words to the laptop over a real Ethernet cable in real time. `pytest --live` drives the Pi end to end: starts the sender over SSH, records, takes the Pi's Ethernet link down and back up (automated cable pull), then checks timing and integrity, link-loss detection and recovery, and runs the recording through the same receiver, voter and actuator. A **live monitor (L2)** runs the same checks during the run, every 1 ms, and a test checks that the live results agree with the replay of the recording within 5 ms. Also runnable from a GitHub "Run workflow" button on a self-hosted runner. ARINC 429 is software-encoded; the physical layer is Ethernet. Guide: [docs/BENCH-GUIDE.md](docs/BENCH-GUIDE.md).
+- **Bench link (L1-L3):** first step off pure simulation. Channel A runs on a Raspberry Pi, a separate computer, and sends its ARINC 429 words to the laptop over a real Ethernet cable in real time. `pytest --live` drives the Pi end to end: starts the sender over SSH, records, takes the Pi's Ethernet link down and back up (automated cable pull), then checks timing and integrity (L3 sets limits on the worst gap and the jitter), link-loss detection and recovery, and runs the recording through the same receiver, voter and actuator. A **live monitor (L2)** runs the same checks during the run, every 1 ms, and a test checks that the live results agree with the replay of the recording within 5 ms. Also runnable from a GitHub "Run workflow" button on a self-hosted runner. ARINC 429 is software-encoded; the physical layer is Ethernet. Guide: [docs/BENCH-GUIDE.md](docs/BENCH-GUIDE.md).
 - **Model check (M1):** the desk-rig actuator (Actuonix L16-P) model is checked against its datasheet, then used to predict the bench results ([reports/l16p_predictions.md](reports/l16p_predictions.md)) for model correlation once the rig is built.
 
 ## Results (current baseline)
 
-- 22/22 requirements traced, 127 tests (124 pass, 3 open defects kept as strict xfail), full suite about a minute. Run for record: commit `d716c1f`, [reports/traceability.md](reports/traceability.md). Every figure is drawn from that run's saved data ([docs/EVIDENCE.md](docs/EVIDENCE.md)).
-- Tests by level: Unit 47, System 73, Bench 7. Every test has a written procedure: [docs/procedures/](docs/procedures/README.md).
+- 24/24 requirements traced, 136 tests (132 pass, 4 strict xfail covering 3 open defects: A6 rated and R9 rated are both RCA-001), full suite about a minute. Run for record (its commit and config fingerprint are at the top): [reports/traceability.md](reports/traceability.md). Every figure is drawn from that run's saved data ([docs/EVIDENCE.md](docs/EVIDENCE.md)).
+- Tests by level: Unit 53, System 76, Bench 7. Every test has a written procedure: [docs/procedures/](docs/procedures/README.md).
 - **Bench link on a real Raspberry Pi** (15 live runs in four test sets, 2026-10-16 to 10-19; one report per run in [bench_runs/](bench_runs/README.md)): a link drop is flagged at 60.0-61.0 ms and recovers within 1 ms after data returns, with zero false stale, every run. With the live monitor on (11 runs), live and replay agreed within 1.8 ms (L2, limit 5 ms). End-to-end recovery is bounded by the network re-connecting (about 3.4-4.4 s after the 5 s drop), not by the software.
-- **Open bench finding, jitter:** p99 jitter was 2.5 ms in Test Set 1 (Oct 16) and 6.3-14.6 ms in Test Set 2 (10 runs, Oct 18, monitor on); worst gap 43 ms, still under the 60 ms stale limit. Test Set 3, an A/B with the live monitor off, gave 4.9-8.2 ms: mostly the bench setup, a smaller effect from the monitor. Test Set 4 (the run for record, Oct 19): 9.5 ms. Next: timestamp words in their own thread, live checks on a real-time target, repeat on a quiet PC, a jitter requirement so a regression fails, longer soak runs.
-- **RCA-001:** R9 reconfiguration transient passes unloaded, **fails at rated load** (integrator windup during rate saturation). The actuator passes all its own acceptance tests. Corrective action (anti-windup) verified in the SIL.
+- **Open bench finding, jitter:** p99 jitter was 2.5 ms in Test Set 1 (Oct 16) and 6.3-14.6 ms in Test Set 2 (10 runs, Oct 18, monitor on); worst gap 43 ms, still under the 60 ms stale limit. Test Set 3, an A/B with the live monitor off, gave 4.9-8.2 ms: mostly the bench setup, a smaller effect from the monitor. Test Set 4 (the run for record, Oct 19): 9.5 ms. Requirement L3 now limits it (worst gap ≤ 45 ms, p99 jitter ≤ 15 ms), so a worse link fails on the next live capture; the finding itself stays open. Next: timestamp words in their own thread, live checks on a real-time target, repeat on a quiet PC, longer soak runs.
+- **RCA-001:** R9 reconfiguration transient passes unloaded, **fails at rated load** (integrator windup during rate saturation). The actuator passed all its original acceptance tests, which used only 1 mm steps. The new A6 large-step test (4 mm, the reconfiguration step size) now catches the defect on the actuator alone. Corrective action (anti-windup) verified in the SIL, at system level (R9) and actuator level (A6).
 - **FINDING-002:** first fault-matrix run isolated the **wrong** channel. Threshold had zero margin over the sensor tolerance stack. Fixed, guarded by a test, and kept as a reproduction test.
 - **FINDING-003:** after losing one of two motors, the actuator holds unloaded but is **back-driven at rated load** (one motor = half the stall force). Sizing option verified; open.
 - **FINDING-004:** first force-fight monitor disengaged **all three** lanes on a large fault. Now isolates only the largest outlier; guarded by a test.
@@ -47,12 +47,12 @@ EMA characterization, triplex ARINC 429 sensor fault response, and actuator-leve
 | **Evidence map**: every figure and slide number, which test produced it, which data file, which run | [docs/EVIDENCE.md](docs/EVIDENCE.md) |
 | Plot data from the run for record (one CSV per plotted series, stamped with test, result, commit, config) | [reports/data/](reports/data/) |
 | Requirements, full text | [requirements/requirements.yaml](requirements/requirements.yaml) |
-| Test cases: actuator acceptance (A1-A5) | [tests/test_part_a_actuator.py](tests/test_part_a_actuator.py) |
+| Test cases: actuator acceptance (A1-A6) | [tests/test_part_a_actuator.py](tests/test_part_a_actuator.py) |
 | Test cases: ARINC 429 receiver (ICD-1, R1-R4) | [tests/test_part_b_receiver.py](tests/test_part_b_receiver.py) |
 | Test cases: voter (R5-R8) | [tests/test_part_b_voter.py](tests/test_part_b_voter.py) |
 | Test cases: fault matrix and system level (R9, R10) | [tests/test_part_b_system.py](tests/test_part_b_system.py) |
 | Test cases: actuator faults (R11-R13) | [tests/test_part_c_actuator_faults.py](tests/test_part_c_actuator_faults.py) |
-| Test cases: bench link, channel A on a Raspberry Pi (L1, L2) | [tests/test_bench_link.py](tests/test_bench_link.py) |
+| Test cases: bench link, channel A on a Raspberry Pi (L1-L3) | [tests/test_bench_link.py](tests/test_bench_link.py) |
 | Bench recordings from the Raspberry Pi (raw words, arrival times) | [bench_data/](bench_data/) |
 | Test cases: bench actuator model vs datasheet (M1) | [tests/test_model_bench_actuator.py](tests/test_model_bench_actuator.py) |
 | Predicted bench results, Actuonix L16-P | [reports/l16p_predictions.md](reports/l16p_predictions.md) |
@@ -117,7 +117,7 @@ python -m pytest tests/test_bench_link.py --live -v   # drive the real Raspberry
 ## Framework design
 
 - **Fixtures** give each test a fresh, known configuration (config control in code). `load_condition` runs a test once per load.
-- **Parametrize** drives the fault matrix: 8 fault types x 3 channels.
+- **Parametrize** drives the fault matrix: 9 fault types x 3 channels.
 - **`@pytest.mark.req("R6")`** tags each test; a hook builds the traceability matrix with git commit, config hash, measured values, each test's level (Unit / System / Bench, by file or `@pytest.mark.level`), and whether it was a full run for record or a partial run.
 - **Strict xfail** keeps a known open defect in regression, tied to its RCA.
 

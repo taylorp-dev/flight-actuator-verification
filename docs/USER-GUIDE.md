@@ -35,12 +35,12 @@ A **software-in-the-loop** test bench for a flight-control actuator, written in 
 
 The test suite checks four things:
 
-- **Part A, actuator acceptance (A1-A5):** does the actuator, on its own, meet its spec? Step response, maximum rate, accuracy, backlash, bandwidth, behavior under load.
+- **Part A, actuator acceptance (A1-A6):** does the actuator, on its own, meet its spec? Step response (small 1 mm and large 4 mm steps), maximum rate in both directions, accuracy, backlash, bandwidth, behavior under load.
 - **Part B, system fault response (ICD-1, R1-R10):** when a sensor fails, does the system catch it, isolate it, and keep the actuator inside its limits?
 - **Part C, actuator faults (R11-R13):** when something inside the actuation system fails (a motor channel lost, a jam, two lanes fighting each other on one surface), is it caught and handled?
 - **Model check (M1):** does the model of the desk-rig actuator (Actuonix L16-P) match its datasheet? It gives the predictions the real bench will be compared against.
 
-One optional part uses real hardware: the **bench link (L1)** runs sensor channel A on a Raspberry Pi and sends it to the PC over a real Ethernet cable. Its recordings are saved in `bench_data/`, so the normal run replays them and you don't need the Pi to run anything in this guide. Setting up and running the Pi live: `docs/BENCH-GUIDE.md`.
+One optional part uses real hardware: the **bench link (L1-L3)** runs sensor channel A on a Raspberry Pi and sends it to the PC over a real Ethernet cable. Its recordings are saved in `bench_data/`, so the normal run replays them and you don't need the Pi to run anything in this guide. Setting up and running the Pi live: `docs/BENCH-GUIDE.md`.
 
 All numbers are representative, not from any real aircraft. The flight-class actuator is sized to the published force class of production fly-by-wire actuators (about 1,000 lbf), but it is not a model of anyone's actual actuator. The point is the **test method**. Sources: `docs/REFERENCES.md`.
 
@@ -211,24 +211,25 @@ python -m pytest
 ### What you should see
 
 ```
-collected 127 items
+collected 136 items
 
 tests\test_bench_link.py .......                                         [  5%]
 tests\test_model_bench_actuator.py ....                                  [  8%]
-tests\test_part_a_actuator.py .........                                  [ 15%]
-tests\test_part_b_receiver.py ...................                        [ 30%]
-tests\test_part_b_system.py ..........................x...               [ 54%]
-tests\test_part_b_voter.py ..............                                [ 65%]
-tests\test_part_c_actuator_faults.py .x.................x............... [ 92%]
+tests\test_part_a_actuator.py ............x..                            [ 19%]
+tests\test_part_b_receiver.py ...................                        [ 33%]
+tests\test_part_b_system.py .............................x...            [ 57%]
+tests\test_part_b_voter.py ..............                                [ 67%]
+tests\test_part_c_actuator_faults.py .x.................x............... [ 93%]
 .........                                                                [100%]
 
+XFAIL tests/test_part_a_actuator.py::test_a6_large_step_baseline[rated] - RCA-001: ...
 XFAIL tests/test_part_b_system.py::test_r9_reconfiguration_transient_baseline[rated] - RCA-001: ...
 XFAIL tests/test_part_c_actuator_faults.py::test_r11_motor_channel_loss_hold[rated] - FINDING-003: ...
 XFAIL tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_baseline_actuator - FINDING-005: ...
-======================= 124 passed, 3 xfailed in 29.7s ========================
+======================= 132 passed, 4 xfailed in 27.3s ========================
 ```
 
-**This is the correct, healthy result.** The first line, `test_bench_link.py`, is the bench link: those 7 tests replay the Raspberry Pi recordings in `bench_data/`, so the Pi doesn't need to be on. L2 (live checks agree with the replay) also reads `bench_data/live_monitor.json`, saved by the same live run as the recording; if that file is missing or from a different run, L2 shows as `s` (skipped) and the result is `123 passed, 1 skipped, 3 xfailed`. If `bench_data/` is ever missing, all 7 show as `s` and the result is `117 passed, 7 skipped, 3 xfailed`. Skipped is never counted as passed. Run time varies by computer (15 to 40 seconds is normal; the Part C false-alarm sweep is the slow part).
+**This is the correct, healthy result.** The first line, `test_bench_link.py`, is the bench link: those 7 tests replay the Raspberry Pi recordings in `bench_data/`, so the Pi doesn't need to be on. L2 (live checks agree with the replay) also reads `bench_data/live_monitor.json`, saved by the same live run as the recording; if that file is missing or from a different run, L2 shows as `s` (skipped) and the result is `131 passed, 1 skipped, 4 xfailed`. If `bench_data/` is ever missing, all 7 show as `s` and the result is `125 passed, 7 skipped, 4 xfailed`. Skipped is never counted as passed. Run time varies by computer (15 to 40 seconds is normal; the Part C false-alarm sweep is the slow part).
 
 **Live = Pi, everything else = recordings.** Nothing in this guide talks to the Pi. Only `--live` (or the "Bench live (Raspberry Pi)" button on GitHub) does, and that's covered in `docs/BENCH-GUIDE.md`.
 
@@ -251,9 +252,9 @@ Each character in the progress line is one test:
 
 ### Why are there expected failures?
 
-Each `x` is a known, documented open defect:
+Each `x` is a known, documented open defect. There are 4 `x` but 3 defects, because RCA-001 is checked twice:
 
-- **RCA-001**, the headline finding: the actuator's reconfiguration transient passes with no load but fails at rated load.
+- **RCA-001**, the headline finding: the actuator's reconfiguration transient passes with no load but fails at rated load (R9). The same windup shows on the actuator alone with a 4 mm step at rated load (A6).
 - **FINDING-003**: after losing one of two motors, the actuator can't hold position at rated load.
 - **FINDING-005**: the jam monitor gives false alarms unless RCA-001's fix is adopted.
 
@@ -297,11 +298,11 @@ Mac: `open -e reports/traceability.md`. Linux: `xdg-open reports/traceability.md
 The top of the file shows what kind of run it was and the **configuration evidence**:
 
 ```
-- Run: FULL RUN (127 of 127 tests), record
-- Git commit: `92ac2cb`
-- Config: `config/sil.yaml` (sha256 `f1bfb3f5a287`)
-- Requirements traced: 22/22 (100.0%)   <- L1/L2 (bench link) show NOT RUN if the Pi recordings are missing
-- Tests by level: Unit 47, System 73, Bench 7
+- Run: FULL RUN (136 of 136 tests), record
+- Git commit: `<commit>`
+- Config: `config/sil.yaml` (sha256 `<first 12 characters>`)
+- Requirements traced: 24/24 (100.0%)   <- L1-L3 (bench link) show NOT RUN if the Pi recordings are missing
+- Tests by level: Unit 53, System 76, Bench 7
 ```
 
 If anyone changes `config/sil.yaml`, the hash changes. That's how a result traces back to the exact configuration that produced it. A `-dirty` suffix on the commit means there were uncommitted changes when the tests ran: the Run line then says "not for record" and the report goes to `reports\dev\`, not `reports\`. The same happens if git isn't available (commit `no-git`) or `BENCH_DATA_DIR` points at recordings outside the repo. Only a run for record ever writes `reports\`.
@@ -333,7 +334,7 @@ It refuses to draw (and says why) if the last run isn't a run for record, if a d
 | `a4_bode.png` | Frequency response, -3 dB bandwidth |
 | `a3_backlash.png` | Truth sensor sees backlash the actuator's own sensor can't |
 | `b_fault_to_actuator.png` | Sensor drift fault traced all the way to actuator motion |
-| `b_fault_matrix.png` | 8 fault types x 3 channels, all results |
+| `b_fault_matrix.png` | 9 fault types x 3 channels, all results, including the R8 annunciations |
 | `finding_loaded_vs_unloaded.png` | RCA-001: passes unloaded, fails loaded, fix verified |
 | `finding_wrong_channel_isolated.png` | FINDING-002: voter failed the wrong channel |
 | `c_motor_loss.png` | R11 / FINDING-003: one motor lost, holds unloaded, back-driven at rated load |
@@ -364,7 +365,7 @@ test_r9_reconfiguration_transient_baseline[unloaded] PASSED
 test_r9_reconfiguration_transient_baseline[rated] XFAIL
 test_r9_corrective_action_verified[unloaded] PASSED
 test_r9_corrective_action_verified[rated] PASSED
-3 passed, 121 deselected, 1 xfailed
+3 passed, 132 deselected, 1 xfailed
 ```
 
 The words in square brackets, like `[rated]`, are the **load condition** the test ran under. One test definition runs once per load automatically.
@@ -377,7 +378,7 @@ All of these are **partial runs**: their matrix goes to `reports\dev\`, not `rep
 
 All settings live in one file: `config/sil.yaml`. Open it in Notepad or VS Code. Lines starting with `#` are comments.
 
-**For each experiment:** change one value, save, run `python -m pytest`, read the result, then **change it back** and run again to confirm you're back at your baseline: `124 passed, 3 xfailed`.
+**For each experiment:** change one value, save, run `python -m pytest`, read the result, then **change it back** and run again to confirm you're back at your baseline: `132 passed, 4 xfailed`.
 
 > Safety net: if you lose track of what you changed and the project is in git, `git checkout config/sil.yaml` restores the file. Or just unzip a fresh copy.
 
@@ -402,7 +403,7 @@ FAILED tests/test_part_b_system.py::test_fault_matrix[frozen-chB]
 FAILED tests/test_part_b_system.py::test_fault_matrix[drift-chB]
 FAILED tests/test_part_b_system.py::test_finding002_reproduced_at_old_threshold
 FAILED tests/test_part_b_voter.py::test_r6_threshold_has_margin_over_tolerance_stack
-4 failed, 120 passed, 3 xfailed
+4 failed, 128 passed, 4 xfailed
 ```
 
 **What happened:** with the threshold at exactly 2x the sensor tolerance, a healthy channel sits right on the limit, noise trips it, and the voter fails the wrong channel. The last two failures are the guards: the FINDING-002 reproduction test (the configured threshold no longer isolates channel B) and the margin test, so this mistake can't slip back in. Details: `docs/rca/FINDING-002-wrong-channel-isolated.md`.
@@ -415,21 +416,23 @@ Under `actuator:`, change `anti_windup: false` to `anti_windup: true`. Run the s
 
 ```
 [XPASS(strict)] RCA-001: integrator windup during rate saturation at rated load
+[XPASS(strict)] RCA-001: integrator windup during rate saturation at rated load
 [XPASS(strict)] FINDING-005: monitor needs the RCA-001 anti-windup fix; baseline windup gives false jam alarms
+FAILED tests/test_part_a_actuator.py::test_a6_large_step_baseline[rated]
 FAILED tests/test_part_b_system.py::test_r9_reconfiguration_transient_baseline[rated]
 FAILED tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_baseline_actuator
-2 failed, 124 passed, 1 xfailed
+3 failed, 132 passed, 1 xfailed
 ```
 
-**What happened:** the fix works, so the "known defect" test now passes. It also closes FINDING-005: with the windup gone, the jam monitor stops false-alarming. One fix, two defects closed. Because it's marked strict, that unexpected pass is reported as a failure. On a real program, this is the moment you'd close the defect: remove the xfail marking and make the fixed design the new baseline.
+**What happened:** the fix works, so both "known defect" tests for RCA-001 (R9 at system level, A6 on the actuator alone) now pass. It also closes FINDING-005: with the windup gone, the jam monitor stops false-alarming. One fix, two defects closed. Because it's marked strict, that unexpected pass is reported as a failure. On a real program, this is the moment you'd close the defect: remove the xfail marking and make the fixed design the new baseline.
 
 Change it back to `false`.
 
 ### Experiment 3: Lighter load
 
-Under `load_conditions:`, change `rated: 4550.0` to `rated: 2275.0`. Run the suite. You should see three `XPASS(strict)` lines (RCA-001, FINDING-003, FINDING-005) and `3 failed, 124 passed`.
+Under `load_conditions:`, change `rated: 4550.0` to `rated: 2275.0`. Run the suite. You should see three `XPASS(strict)` lines (RCA-001 for R9, FINDING-003, FINDING-005) and `3 failed, 132 passed, 1 xfailed`. The one still xfailed is A6 at rated load: even at half the load, the 4 mm step on the actuator alone still overshoots past 10 %.
 
-**What happened:** at half the load, all three load-dependent defects disappear. The actuator doesn't saturate long enough for the windup to matter, and one motor can carry half the load on its own. These defects only show up with a realistic load. That's the core lesson of the project: **test environment fidelity decides what you can catch.**
+**What happened:** at half the load, all three load-dependent defects disappear at system level. The actuator doesn't saturate long enough for the windup to matter, and one motor can carry half the load on its own. These defects only show up with a realistic load. That's the core lesson of the project: **test environment fidelity decides what you can catch.**
 
 Change it back to `4550.0`.
 
@@ -437,7 +440,7 @@ Change it back to `4550.0`.
 
 - Raise `noise_sd_deg` under `sensors:` and see when the voter starts tripping on healthy channels.
 - Change `bias_deg` to `[0.2, 0.0, -0.2]` (healthier sensors) and see how the R9 reconfiguration step shrinks.
-- Lower `kp` under `actuator:` from `15.0` to `9.0`. A4 bandwidth fails (unloaded and rated), and so do A1/A5 rise time, the unloaded R9 overshoot (baseline and with the fix), and the jam-monitor false-alarm checks (10 failures). One design change ripples across several requirements, which is exactly why you run the whole suite, not just the test you think is affected.
+- Lower `kp` under `actuator:` from `15.0` to `9.0`. A4 bandwidth fails (unloaded and rated), and so do A1/A5 rise time, the unloaded A6 and R9 overshoot (baseline and with the fix), and the jam-monitor false-alarm checks (12 failures). One design change ripples across several requirements, which is exactly why you run the whole suite, not just the test you think is affected.
 
 Run `python tools\make_figures.py --dev` after any change to see the effect in the plots (watermarked, in `reports\dev\figures\`).
 
@@ -472,7 +475,7 @@ Run `python tools\make_figures.py --dev` after any change to see the effect in t
 
 | Symptom | What it means | What to do |
 | --- | --- | --- |
-| Result isn't your baseline (`124 passed, 3 xfailed`) and you didn't change anything | Config or code changed | `git status` to see what changed; `git checkout config/sil.yaml` to restore config, or unzip a fresh copy |
+| Result isn't your baseline (`132 passed, 4 xfailed`) and you didn't change anything | Config or code changed | `git status` to see what changed; `git checkout config/sil.yaml` to restore config, or unzip a fresh copy |
 | `XPASS(strict)` | The known RCA-001 defect stopped failing | Expected if you turned on the fix or lowered the load (Experiments 2-3). Otherwise check what changed. |
 | `E` (error) instead of `F` | Test couldn't start; usually a typo in `config/sil.yaml` | YAML is picky about indentation. Use spaces, not tabs, and keep the same indent as neighboring lines. |
 | Different run time from someone else | Different computer speed | Not a problem. Results should match exactly; only timing differs. |
@@ -499,7 +502,7 @@ That's almost always enough to diagnose it.
 ```
 actuator-verification-sil/
 ├── config/sil.yaml              <- every setting and limit (start here)
-├── requirements/requirements.yaml  <- requirement text (ICD-1, A1-A5, M1, R1-R13, L1, L2)
+├── requirements/requirements.yaml  <- requirement text (ICD-1, A1-A6, M1, R1-R13, L1-L3)
 ├── sil/                         <- the simulated system
 │   ├── ema.py                   <-   actuator model
 │   ├── analysis.py              <-   bench measurements (step, rate, Bode, backlash)
@@ -513,13 +516,13 @@ actuator-verification-sil/
 │   └── sim.py                   <-   wires it all together, runs at 1 kHz
 ├── tests/                       <- the automated tests
 │   ├── conftest.py              <-   shared setup + traceability matrix builder
-│   ├── test_part_a_actuator.py  <-   A1-A5
+│   ├── test_part_a_actuator.py  <-   A1-A6
 │   ├── test_part_b_receiver.py  <-   ICD-1, R1-R4
 │   ├── test_part_b_voter.py     <-   R5-R8
 │   ├── test_part_b_system.py    <-   fault matrix, R9, R10
 │   ├── test_part_c_actuator_faults.py <- R11-R13
 │   ├── test_model_bench_actuator.py   <- M1 (L16-P model vs datasheet)
-│   └── test_bench_link.py             <- L1, L2 (real Pi over Ethernet: replay + live monitor)
+│   └── test_bench_link.py             <- L1-L3 (real Pi over Ethernet: replay + live monitor)
 ├── tools/make_figures.py        <- presentation plots, drawn only from reports/data/ of the record run
 ├── tools/predict_bench.py       <- predicted L16-P bench results
 ├── tools/pi_channel_a.py        <- runs on the Raspberry Pi: channel A sender

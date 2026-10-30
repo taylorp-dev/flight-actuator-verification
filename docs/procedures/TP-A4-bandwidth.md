@@ -51,6 +51,6 @@ Amplitude note: 1.0 mm keeps peak rate below the rate limit up to the top of the
 - Measured -3 dB frequency (recorded as a test property in `reports/junit.xml` and `reports/traceability.md`)
 - Git commit, config hash, load condition, date
 
-## 7. Last result (run for record, commit d716c1f)
+## 7. Last result (run for record)
 
 -3 dB at 2.99 Hz unloaded (2.85 Hz at rated load). **PASS.**

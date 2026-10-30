@@ -45,7 +45,7 @@ def test_r6_threshold_has_margin_over_tolerance_stack(cfg, record_property):
     v = cfg["voter"]
     margin = v["threshold_deg"] - 2 * v["tolerance_deg"]
     record_property("margin_deg", round(margin, 2))
-    assert margin >= 0.25
+    assert margin >= cfg["voter"]["margin_min_deg"]
 
 
 @pytest.mark.req("R6")

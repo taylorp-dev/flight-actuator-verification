@@ -30,6 +30,14 @@ actuator_spec:              # Part A acceptance limits
   A4_bandwidth_min_hz: 2.5
   A5_overshoot_max_pct: 10.0
   A5_rise_time_max_s: 0.15
+  # A6: the reconfiguration step (R9 steps the actuator about 4 mm) flowed down to
+  # the actuator spec. Part A used only 1 mm steps, which never saturate the motor,
+  # so the RCA-001 windup passed acceptance. A6 closes that gap.
+  A6_step_mm: 4.0
+  A6_overshoot_max_pct: 10.0
+  # A3: the actuator's own sensor must see less than this fraction of the backlash
+  # the truth sensor sees (shows why the truth sensor grades the test)
+  A3_own_feedback_max_frac: 0.25
 
 icd:                        # airframe interface control document (labels)
   airframe: "Generic Rotorcraft A"
@@ -52,6 +60,8 @@ voter:
   tolerance_deg: 1.0        # healthy sensor accuracy spec (used by the margin check)
   persistence_s: 0.10
   frame_s: 0.02
+  margin_min_deg: 0.25      # guard test: threshold must clear 2 x tolerance by at least this
+  latency_allowance_deg: 0.35   # voted error allowance for sample/frame latency during a maneuver
 
 command_law:
   gain_mm_per_deg: 4.0
@@ -91,13 +101,14 @@ system_spec:                # Part B system-level limits
   R9_settle_time_max_s: 0.80
   R11_hold_max_mm: 0.50     # position hold after losing one motor channel
   R11_hold_s: 5.0
+  R11_fail_at_s: 1.0        # test scenario: one motor lost at this time while holding
   R12_detect_max_s: 0.30    # jam annunciation latency, command moving
   R12_cmd_rate_mm_s: 10.0
   R13_fight_max_n: 500.0    # healthy lanes, equalization on
   R13_undetected_err_max_mm: 0.60   # a lane fault too small to detect must stay this small at the surface
   R13_final_err_max_mm: 0.25        # after the faulty lane is disengaged
 
-bench_link:                 # real Pi link (L1, L2)
+bench_link:                 # real Pi link (L1, L2, L3)
   # Live checks run during the capture every check period (L2). Live vs replay of
   # the same recording must agree within tol. Budget: replay 1 ms step + live
   # check period 1 ms + Windows scheduling delay (word jitter up to 2.5 ms
@@ -105,6 +116,16 @@ bench_link:                 # real Pi link (L1, L2)
   # limit / 4 = 15 ms.
   live_check_period_s: 0.001
   live_vs_replay_tol_ms: 5.0
+  mean_pitch_tol_deg: 0.05  # decoded mean pitch vs what the Pi was told to send
+  rate_tol_frac: 0.02       # mean interval within 2 % of nominal (L1)
+  replay_step_tol_ms: 2.0   # replay checks validity every 1 ms; +2 ms covers the step
+  # L3 (added 2026-10-29, from the open jitter finding): a jitter regression must
+  # fail, not just be recorded. Worst gap keeps 25 % margin below the 60 ms stale
+  # limit (3 intervals). p99 limit sits just above the worst seen in 15 live runs
+  # (14.6 ms, Test Set 2): a baseline limit from data, with little headroom. It
+  # applies to each new live capture; a normal run replays the saved recording.
+  max_gap_max_ms: 45.0
+  p99_jitter_max_ms: 15.0
 
 # Bench actuator for the desk rig (next step, not built yet). Parameters come from
 # the Actuonix L16 datasheet, 35:1 gear, 12 V, 100 mm stroke. The model gives the

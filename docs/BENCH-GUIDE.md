@@ -159,7 +159,7 @@ test_l2_live_vs_replay_agree PASSED
 7 passed
 ```
 
-The measured numbers (mean interval, jitter, worst gap, how fast the drop was flagged and recovered, live and replay side by side, and `live_max_check_gap_ms`, how late the live checks themselves ran) land in the traceability matrix under L1 and L2. This is a **partial run** (bench tests only), so the matrix goes to `reports/dev/traceability.md`, not for record. The record comes from the full suite afterwards (below).
+The measured numbers (mean interval, jitter, worst gap, how fast the drop was flagged and recovered, live and replay side by side, and `live_max_check_gap_ms`, how late the live checks themselves ran) land in the traceability matrix under L1, L2 and L3 (L3 checks the worst gap ≤ 45 ms and p99 jitter ≤ 15 ms). This is a **partial run** (bench tests only), so the matrix goes to `reports/dev/traceability.md`, not for record. The record comes from the full suite afterwards (below).
 
 **Why live and replay both:** the replay keeps the PC's own hiccups out of the verdict and leaves evidence anyone can re-check; the live checks show it works at real time. Windows and Python are not a real-time system, so the live monitor asks Windows for a 1 ms timer during the run and records how late its checks ran. If L2 fails, look at `live_max_check_gap_ms` first: a big value means the PC was busy, not that the link is wrong.
 

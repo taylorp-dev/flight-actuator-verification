@@ -91,7 +91,7 @@ Steps 1-4 run with one real hardware piece (the Pi on channel A). Steps 5-7 are 
 
 The diagram's Pi link note shows the measured timing over 15 live runs: words arrive every 20.0 ms on average, p99 jitter is 2.5-14.6 ms, and the worst gap is 43 ms, still under the 60 ms stale limit. A live monitor checks every word as it arrives.
 
-Jitter was 2.5 ms in Test Set 1 (2026-10-16) and 6.3-14.6 ms in Test Set 2 (2026-10-18). An A/B test (Test Set 3, live monitor off) showed the rise is mostly the bench setup, with a smaller effect from the live monitor. Test Set 4, the run for record on 2026-10-19, measured 9.5 ms. It's an open finding; every run's report is in [bench_runs/](../bench_runs/README.md), and see the README results and [docs/procedures/bench-link.md](procedures/bench-link.md).
+Jitter was 2.5 ms in Test Set 1 (2026-10-16) and 6.3-14.6 ms in Test Set 2 (2026-10-18). An A/B test (Test Set 3, live monitor off) showed the rise is mostly the bench setup, with a smaller effect from the live monitor. Test Set 4, the run for record on 2026-10-19, measured 9.5 ms. Requirement L3 now sets limits from this data (worst gap ≤ 45 ms, p99 jitter ≤ 15 ms), so a worse link fails the test on the next live capture (a normal run replays the saved recording). The jitter itself is still an open finding; every run's report is in [bench_runs/](../bench_runs/README.md), and see the README results and [docs/procedures/bench-link.md](procedures/bench-link.md).
 
 ## Related
 

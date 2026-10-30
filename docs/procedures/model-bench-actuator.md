@@ -2,7 +2,7 @@
 
 These tests check the model of the desk rig actuator (Actuonix L16-P) against the manufacturer's datasheet, before the rig is built. Both are Unit tests: the actuator model runs alone, with no receiver, voter or link. They live in `tests/test_model_bench_actuator.py`.
 
-| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit d716c1f) |
+| TC | Requirement(s) | Test function | Cases | Last result (run for record) |
 |---|---|---|---|---|
 | [TC-M1-U01](#tc-m1-u01-model-speed-matches-the-datasheet-at-three-force-points) | M1 | `test_m1_speed_force_matches_datasheet` | 3 | PASS |
 | [TC-M1-U02](#tc-m1-u02-model-uses-the-datasheet-backlash) | M1 | `test_m1_backlash_matches_datasheet` | 1 | PASS |
@@ -64,7 +64,7 @@ Expected output: `3 passed` (one per case). (A single test is a partial run: its
 
 **Pass criteria:** every step gives its expected result, for all three cases. Step 5 is an `assert`; if it fails for any case, that case fails.
 
-**Last result (run for record, commit d716c1f):** PASS, all 3 cases. No load: 32.0 mm/s vs 32.0 (0.0 %). 50 N: 15.5 mm/s vs 16.0 (3.1 %). 24 N: 24.1 mm/s vs 24.0 (0.3 %).
+**Last result (run for record):** PASS, all 3 cases. No load: 32.0 mm/s vs 32.0 (0.0 %). 50 N: 15.5 mm/s vs 16.0 (3.1 %). 24 N: 24.1 mm/s vs 24.0 (0.3 %).
 
 ---
 
@@ -102,4 +102,4 @@ Expected output: `1 passed`. (A single test is a partial run: its report goes to
 
 **Pass criteria:** every step gives its expected result. Steps 4 and 5 are `assert`s; if either fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS. Backlash setting 0.25 mm, predicted bench hysteresis 0.19 mm.
+**Last result (run for record):** PASS. Backlash setting 0.25 mm, predicted bench hysteresis 0.19 mm.

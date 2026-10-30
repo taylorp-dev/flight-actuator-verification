@@ -2,7 +2,7 @@
 
 These tests check the ARINC 429 word format (ICD-1) and the receiver's per-word validity checks: parity (R1), SSM (R2), staleness (R3) and physical range (R4). All of them are **Unit** tests: they exercise the encoder, decoder and `Receiver` alone, with no simulation loop. Test file: `tests/test_part_b_receiver.py`.
 
-| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit d716c1f) |
+| TC | Requirement(s) | Test function | Cases | Last result (run for record) |
 |---|---|---|---|---|
 | [TC-ICD-1-U01](#tc-icd-1-u01-bnr-value-survives-encode-and-decode) | ICD-1 | `test_icd_bnr_round_trip` | 8 | PASS (8 of 8) |
 | [TC-ICD-1-U02](#tc-icd-1-u02-label-bits-are-stored-reversed) | ICD-1 | `test_icd_label_bits_are_reversed` | 1 | PASS |
@@ -81,7 +81,7 @@ Note: 179.9° and -180.0° are outside the pitch physical range (±90°) but ins
 
 **Pass criteria:** every step gives its expected result for every case. Each check is an `assert`; if any one fails, that case fails.
 
-**Last result (run for record, commit d716c1f):** PASS, 8 of 8 cases (no measured values recorded).
+**Last result (run for record):** PASS, 8 of 8 cases (no measured values recorded).
 
 ---
 
@@ -120,7 +120,7 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** step 2 is `True`. It is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -161,7 +161,7 @@ These three values are not separate pytest cases; they run inside one test. The 
 
 **Pass criteria:** step 2 is `True` for all three values. It is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -205,7 +205,7 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** every step gives its expected result. Each check is an `assert`; if any one fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -254,7 +254,7 @@ Expected output: `2 passed`. pytest shows the cases as `[0]` and `[1]`, the SSM 
 
 **Pass criteria:** steps 3 and 4 are `True` for both cases. They are `assert`s; if one fails, that case fails.
 
-**Last result (run for record, commit d716c1f):** PASS, 2 of 2 cases (no measured values recorded).
+**Last result (run for record):** PASS, 2 of 2 cases (no measured values recorded).
 
 ---
 
@@ -294,7 +294,7 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** step 2 is `True`. It is an `assert`; if it fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
+**Last result (run for record):** PASS (no measured values recorded).
 
 ---
 
@@ -331,7 +331,7 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 | Step | Action | Python command | Expected result | Line |
 |---|---|---|---|---|
 | 1 | Send a good 5.0° pitch word at time 0 | `rx.receive("pitch", encode_bnr(ld, 5.0), 0.0)` | Word accepted. The return value is not checked | 72 |
-| 2 | Work out the stale limit: 3 intervals at the pitch rate | `limit = 3 / ld.rate_hz` | 3 / 50 Hz = 0.060 s (rate from `icd.labels.pitch.rate_hz`) | 73 |
+| 2 | Work out the stale limit: `icd.stale_intervals` (3) intervals at the pitch rate | `limit = cfg["icd"]["stale_intervals"] / ld.rate_hz` | 3 / 50 Hz = 0.060 s (count from `icd.stale_intervals`, rate from `icd.labels.pitch.rate_hz`) | 73 |
 | 3 | Record the limit in the report | `record_property("stale_limit_ms", round(limit * 1000, 1))` | `stale_limit_ms` saved | 74 |
 | 4 | Read pitch exactly at the limit, 60 ms | `rx.read("pitch", limit)[0]` | `True`: still valid | 75 |
 | 5 | Read pitch 1 ms past the limit, 61 ms | `valid, _, reasons = rx.read("pitch", limit + 0.001)` | Result returned | 76 |
@@ -341,7 +341,7 @@ How the receiver decides (sil/receiver.py line 26): stale when time since the la
 
 **Pass criteria:** steps 4 and 6 are `True`. They are `assert`s; if either fails, the test fails.
 
-**Last result (run for record, commit d716c1f):** PASS. Stale limit recorded: `stale_limit_ms` = 60.0.
+**Last result (run for record):** PASS. Stale limit recorded: `stale_limit_ms` = 60.0.
 
 ---
 
@@ -392,4 +392,4 @@ The test checks only the valid flag, not the reason. For the two invalid cases t
 
 **Pass criteria:** step 2 is `True` for all four cases. It is an `assert`; if it fails, that case fails.
 
-**Last result (run for record, commit d716c1f):** PASS, 4 of 4 cases (no measured values recorded).
+**Last result (run for record):** PASS, 4 of 4 cases (no measured values recorded).

@@ -302,7 +302,14 @@ def fig_wrong_channel(run, cfg):
 
 
 def fig_fault_matrix(run, cfg):
-    kinds = ["frozen", "drift", "bias_jump", "spike", "bad_parity", "ssm_fail", "dropout", "out_of_range"]
+    # fault types come from the run's data (one file per case); this list only sets the row order
+    order = ["frozen", "drift", "bias_jump", "spike", "bad_parity", "ssm_fail", "ssm_ncd", "dropout", "out_of_range"]
+    found = sorted({f[len("fault_matrix_"):-len("_chA.csv")] for f in run.files
+                    if f.startswith("fault_matrix_") and f.endswith("_chA.csv")})
+    kinds = [k for k in order if k in found] + [k for k in found if k not in order]
+    if not kinds:
+        raise EvidenceError("no fault matrix data in this run")
+    labels = {"ssm_fail": "SSM failure warn.", "ssm_ncd": "SSM no comp. data"}
     cells, passed, total, files = [], 0, 0, []
     for k in kinds:
         row = []
@@ -323,9 +330,9 @@ def fig_fault_matrix(run, cfg):
                 txt = "excluded\n(receiver)" if h["excluded_by_receiver"] == "True" else "MISSED"
             row.append(txt if ok else f"{txt}\nTEST {h['test_status'].upper()}")
         cells.append(row)
-    fig, ax = plt.subplots(figsize=(6.4, 4.6))
+    fig, ax = plt.subplots(figsize=(6.4, 5.0))
     ax.axis("off")
-    tbl = ax.table(cellText=cells, rowLabels=[k.replace("_", " ") for k in kinds],
+    tbl = ax.table(cellText=cells, rowLabels=[labels.get(k, k.replace("_", " ")) for k in kinds],
                    colLabels=["channel A", "channel B", "channel C"], loc="center", cellLoc="center")
     tbl.scale(1, 2.2)
     tbl.auto_set_font_size(False)
@@ -342,7 +349,9 @@ def fig_fault_matrix(run, cfg):
             cell.set_facecolor("#fbe3e3" if bad else "#e6f2fb")
             cell.get_text().set_color(INK)
     result = "all pass" if passed == total else f"{passed} of {total} pass"
-    sub = ("(each test also checks the voted value stays within the voter tolerance + 0.35 deg latency allowance, and R10 limits hold)"
+    allow = cfg["voter"]["latency_allowance_deg"]
+    sub = (f"(each test also checks the voted value stays within the voter tolerance + {allow:g} deg latency allowance,\n"
+           "the R8 annunciations, and that the R10 command limits hold)"
            if passed == total else "(failed cells: see the traceability matrix for which check failed)")
     ax.set_title(f"Fault matrix: {len(kinds)} fault types x 3 channels, {result}\n{sub}", loc="left", fontsize=11)
     fig.text(0.01, 0.02, f"Software-in-the-loop simulation. {'from the run for record' if run.is_record else 'NOT FOR RECORD'}, "

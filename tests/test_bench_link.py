@@ -236,7 +236,7 @@ def test_l1_words_on_the_wire_decode_per_icd(cfg, bench, record_property):
     assert all(d.parity_ok for d in decoded), "parity error on the wire"
     assert all(d.sdi == 1 for d in decoded), "channel A must send SDI 1"
     assert all(d.ssm == SSM.NORMAL for d in decoded)
-    assert abs(np.mean(pitch) - expect) < 0.05
+    assert abs(np.mean(pitch) - expect) < cfg["bench_link"]["mean_pitch_tol_deg"]
     live = live_results(bench)                       # same checks, made live during the run
     if live:
         record_property("live_decode_errors", sum(live["decode_errors"].values()))
@@ -245,6 +245,7 @@ def test_l1_words_on_the_wire_decode_per_icd(cfg, bench, record_property):
 
 # --------------------------------------------------------------- the timing
 @pytest.mark.req("L1")
+@pytest.mark.req("L3")
 def test_l1_rate_and_jitter_on_real_link(cfg, bench, record_property):
     rows, _ = capture(bench, "healthy")
     labels = label_defs(cfg)
@@ -258,8 +259,14 @@ def test_l1_rate_and_jitter_on_real_link(cfg, bench, record_property):
     record_property("p99_jitter_ms", round(float(np.percentile(jitter, 99)) * 1000, 2))
     record_property("max_interval_ms", round(float(dt.max()) * 1000, 2))
     record_property("stale_limit_ms", round(stale_limit * 1000, 1))
-    assert abs(dt.mean() - nominal) / nominal <= 0.02
+    bl = cfg["bench_link"]
+    record_property("max_gap_limit_ms", bl["max_gap_max_ms"])
+    record_property("p99_jitter_limit_ms", bl["p99_jitter_max_ms"])
+    assert abs(dt.mean() - nominal) / nominal <= bl["rate_tol_frac"]
     assert dt.max() < stale_limit, "a healthy-link gap would trip the stale check"
+    # L3: jitter has limits, so a regression fails instead of only being recorded
+    assert dt.max() * 1000 <= bl["max_gap_max_ms"], "worst gap eats into the stale margin"
+    assert np.percentile(jitter, 99) * 1000 <= bl["p99_jitter_max_ms"], "p99 jitter over its limit"
     live = live_results(bench)
     if live:                                         # how late the live checks themselves ran
         record_property("live_max_check_gap_ms", live["max_check_gap_ms"])
@@ -301,8 +308,9 @@ def test_l1_cable_pull_flagged_stale_and_recovers(cfg, bench, record_property, p
     record_property("recovered_after_reconnect_ms",
                     None if d["recover_s"] is None else round(d["recover_s"] * 1000, 1))
     assert d["flag_s"] is not None, "receiver never flagged the pulled link"
-    assert d["flag_s"] <= d["stale_limit_s"] + 0.002
-    assert d["recover_s"] is not None and d["recover_s"] <= 0.002, "no recovery after reconnect"
+    step_tol_s = cfg["bench_link"]["replay_step_tol_ms"] / 1000   # replay checks every 1 ms
+    assert d["flag_s"] <= d["stale_limit_s"] + step_tol_s
+    assert d["recover_s"] is not None and d["recover_s"] <= step_tol_s, "no recovery after reconnect"
     live = live_results(bench)                       # the same link drop, caught live
     if live:
         tol_s = cfg["bench_link"]["live_vs_replay_tol_ms"] / 1000
@@ -329,7 +337,7 @@ def test_l1_closed_loop_with_real_channel_a(cfg, bench, record_property):
     record_property("max_voted_error_deg", round(float(err.max()), 3))
     assert not run.failed
     assert all(m == Mode.TRIPLEX for m, s in zip(run.mode, settled) if s)
-    assert err.max() <= cfg["voter"]["tolerance_deg"] + 0.35
+    assert err.max() <= cfg["voter"]["tolerance_deg"] + cfg["voter"]["latency_allowance_deg"]
 
 
 @pytest.mark.req("L1")
@@ -357,7 +365,7 @@ def test_l1_closed_loop_cable_pull(cfg, bench, record_property, plot_data):
     assert "DEGRADED_DUAL" in run.annunciations
     assert np.max(np.abs(run.cmd)) <= law["pos_limit_mm"] + 1e-9
     err = np.abs(run.voted[settled] - TRUE_PITCH)
-    assert err.max() <= cfg["voter"]["tolerance_deg"] + 0.35
+    assert err.max() <= cfg["voter"]["tolerance_deg"] + cfg["voter"]["latency_allowance_deg"]
 
 
 # --------------------------------------------------------------- live vs replay

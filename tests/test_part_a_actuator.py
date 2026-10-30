@@ -1,4 +1,4 @@
-"""Part A: actuator characterization, bench acceptance test style (A1-A5).
+"""Part A: actuator characterization, bench acceptance test style (A1-A6).
 
 Measurements are taken at the output rod (independent truth sensor), never
 from the actuator's own feedback.
@@ -30,12 +30,15 @@ def test_a1_small_signal_step_unloaded(cfg, record_property, plot_data):
 
 
 @pytest.mark.req("A2")
-def test_a2_max_rate(cfg, load_condition, record_property):
+@pytest.mark.parametrize("direction", ["extend", "retract"])
+def test_a2_max_rate(cfg, load_condition, direction, record_property):
+    """Both directions: extend works against the load, retract is helped by it."""
     name, load_n = load_condition
     spec = cfg["actuator_spec"]
     limit = spec["A2_rate_min_unloaded_mm_s"] if load_n == 0 else spec["A2_rate_min_rated_mm_s"]
-    rate = an.max_rate(make_ema(cfg, load_n), direction=+1.0)   # extend, against the load
+    rate = an.max_rate(make_ema(cfg, load_n), direction=+1.0 if direction == "extend" else -1.0)
     record_property("load", name)
+    record_property("direction", direction)
     record_property("rate_mm_s", round(rate, 1))
     assert rate >= limit
 
@@ -95,8 +98,9 @@ def test_a3_own_feedback_cannot_see_backlash(cfg, record_property, plot_data):
                                          "own_err_mm": ok - ck},
                    period_s=period, sine_truth_hysteresis_mm=sine_truth,
                    sine_own_feedback_hysteresis_mm=sine_own)
-    assert own_hyst < 0.25 * truth_hyst
-    assert sine_own < 0.25 * sine_truth
+    frac = cfg["actuator_spec"]["A3_own_feedback_max_frac"]
+    assert own_hyst < frac * truth_hyst
+    assert sine_own < frac * sine_truth
 
 
 @pytest.mark.req("A4")
@@ -131,3 +135,42 @@ def test_a5_accuracy_rated_load(cfg, record_property):
     acc, _ = an.backlash_and_accuracy(make_ema(cfg, cfg["load_conditions"]["rated"]))
     record_property("accuracy_mm", round(acc, 3))
     assert acc <= cfg["actuator_spec"]["A3_accuracy_max_mm"]
+
+
+# ------------------------------------------------- A6: large step (RCA-001 flow-down)
+def a6_step(cfg, load_n, anti_windup=None):
+    """4 mm step, the size of a reconfiguration step, on the bare actuator."""
+    params = dict(cfg["actuator"])
+    if anti_windup is not None:
+        params["anti_windup"] = anti_windup
+    ema = EMA(EMAParams.from_dict(params), load_n=load_n)
+    return an.step_response(ema, cfg["actuator_spec"]["A6_step_mm"], duration_s=3.0)
+
+
+@pytest.mark.req("A6")
+def test_a6_large_step_baseline(cfg, load_condition, record_property, request):
+    """Baseline actuator (anti-windup off). Rated load is the RCA-001 open defect,
+    kept as a strict expected failure so it can't quietly disappear."""
+    name, load_n = load_condition
+    if load_n > 0:
+        request.node.add_marker(pytest.mark.xfail(
+            strict=True, raises=AssertionError,
+            reason="RCA-001: integrator windup during rate saturation at rated load"))
+    r = a6_step(cfg, load_n)
+    record_property("load", name)
+    record_property("overshoot_pct", round(r.overshoot_pct, 1))
+    record_property("overshoot_mm", round(r.overshoot_pct * cfg["actuator_spec"]["A6_step_mm"] / 100, 3))
+    record_property("rise_s", round(r.rise_time_s, 3))
+    assert r.overshoot_pct <= cfg["actuator_spec"]["A6_overshoot_max_pct"]
+
+
+@pytest.mark.req("A6")
+def test_a6_large_step_corrective_action(cfg, load_condition, record_property):
+    """RCA-001 corrective action (anti-windup on) passes A6 at both loads."""
+    name, load_n = load_condition
+    r = a6_step(cfg, load_n, anti_windup=True)
+    record_property("load", name)
+    record_property("overshoot_pct", round(r.overshoot_pct, 1))
+    record_property("overshoot_mm", round(r.overshoot_pct * cfg["actuator_spec"]["A6_step_mm"] / 100, 3))
+    record_property("rise_s", round(r.rise_time_s, 3))
+    assert r.overshoot_pct <= cfg["actuator_spec"]["A6_overshoot_max_pct"]

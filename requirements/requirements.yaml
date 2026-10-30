@@ -9,7 +9,7 @@ A1:
   text: Small-signal step response (1 mm, unloaded) shall have rise time <= 0.15 s and overshoot <= 10 %.
 A2:
   stage: Actuator
-  text: Maximum rate shall be >= 35 mm/s unloaded and >= 10 mm/s at rated opposing load.
+  text: Maximum rate shall be >= 35 mm/s unloaded, extending and retracting, and >= 10 mm/s at rated load in both directions (the load opposes extending and assists retracting).
 A3:
   stage: Actuator
   text: Static position accuracy shall be <= 0.10 mm and backlash <= 0.15 mm, measured at the output rod.
@@ -19,6 +19,9 @@ A4:
 A5:
   stage: Actuator
   text: At rated opposing load, small-signal step overshoot shall be <= 10 %, rise time <= 0.15 s, accuracy <= 0.10 mm.
+A6:
+  stage: Actuator
+  text: Large-signal step response (4 mm, the size of a single-channel reconfiguration step) shall overshoot <= 10 %, unloaded and at rated opposing load.
 M1:
   stage: Model
   text: The bench actuator model (Actuonix L16-P) shall reproduce the manufacturer datasheet speed-force points within 5 % and use the datasheet backlash.
@@ -58,6 +61,9 @@ L1:
 L2:
   stage: Bench link
   text: The bench link checks shall also run live, during the capture, and the live results shall agree with the replay of the same recording (same words, fingerprint of the saved recording; no decode errors; no false stale anywhere outside the link drop; stale flag and recovery times within 5 ms).
+L3:
+  stage: Bench link
+  text: On a healthy link, the longest gap between words shall be <= 45 ms (25 % margin below the stale limit) and the 99th-percentile interval jitter shall be <= 15 ms.
 R11:
   stage: Actuator fault
   text: After loss of one of two motor channels, the actuator shall hold commanded position within 0.50 mm for 5 s at every load condition up to rated.
