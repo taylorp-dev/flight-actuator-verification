@@ -2,7 +2,7 @@
 
 These tests inject one fault at a sensor channel and measure the effect all the way out at the actuator. They are **System** level: the whole loop runs together (sensors → ARINC 429 words → receivers → voter → command law → actuator), through `run_scenario()` in `sil/sim.py`. The one exception is TC-R10-U01, which drives the command law on its own and is marked **Unit**. Test file: `tests/test_part_b_system.py`.
 
-| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit 19de3ef) |
+| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit d716c1f) |
 |---|---|---|---|---|
 | [TC-FM-S01](#tc-fm-s01-fault-matrix-with-one-sensor-fault-at-a-time) | R1, R2, R3, R4, R6, R7, R8, R10 | `test_fault_matrix` | 24 | PASS (24 of 24) |
 | [TC-F002-S01](#tc-f002-s01-finding-002-reproduced-at-the-old-threshold) | R6 | `test_finding002_reproduced_at_old_threshold` | 1 | PASS |
@@ -55,7 +55,7 @@ Expected output: `24 passed`. One case only, for example: `python -m pytest "tes
 
 **Setup (done automatically by pytest before step 1):** `cfg`, `record_property`, `request` (see Common setup). The case ID, for example `frozen-chA`, comes from line 38.
 
-**Cases** (measured values from the run for record, commit `19de3ef`; each cell is max voted error, final mode, detect latency when recorded):
+**Cases** (measured values from the run for record, commit `d716c1f`; each cell is max voted error, final mode, detect latency when recorded):
 
 | Fault kind | Magnitude | Expected response | Requirements | Channel A | Channel B | Channel C |
 |---|---|---|---|---|---|---|
@@ -97,7 +97,7 @@ Expected output: `24 passed`. One case only, for example: `python -m pytest "tes
 
 **Pass criteria:** every step gives its expected result for every case. Each check is an `assert`; if any one fails, that case fails.
 
-**Last result (run for record, commit 19de3ef):** PASS, 24 of 24. Largest voted error 1.25° (frozen and drift on channels B and C), limit 1.35°. All isolate cases latched only the faulted channel and ended in DUAL; detect latency 99 ms for bias_jump, 839 to 2299 ms for frozen and drift. The R10 checks (steps 10 and 11) passed in every case but their values are not recorded for this test.
+**Last result (run for record, commit d716c1f):** PASS, 24 of 24. Largest voted error 1.25° (frozen and drift on channels B and C), limit 1.35°. All isolate cases latched only the faulted channel and ended in DUAL; detect latency 99 ms for bias_jump, 839 to 2299 ms for frozen and drift. The R10 checks (steps 10 and 11) passed in every case but their values are not recorded for this test.
 
 ---
 
@@ -140,7 +140,7 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** steps 7 and 8 are both `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Old 2.0° isolated channel C (wrong), max voted error 3.24°; configured 2.5° isolated channel B, max voted error 1.25°.
+**Last result (run for record, commit d716c1f):** PASS. Old 2.0° isolated channel C (wrong), max voted error 3.24°; configured 2.5° isolated channel B, max voted error 1.25°.
 
 ---
 
@@ -194,7 +194,7 @@ Expected output: `1 passed, 1 xfailed`. `xfail_strict = true` in pytest.ini (lin
 
 **Pass criteria:** unloaded case: every step gives its expected result. Rated case: expected to fail step 3d (and 3e) until the baseline design changes; pytest reports it as `xfailed`, and as a failure if it passes.
 
-**Last result (run for record, commit 19de3ef):** Unloaded PASS: step 4.04 mm, overshoot 0.307 mm, settle 0.619 s. Rated OPEN DEFECT (expected fail, RCA-001), reason "RCA-001: integrator windup during rate saturation at rated load": step 4.06 mm, overshoot 0.922 mm (limit 0.60), settle 1.164 s (limit 0.80). See `docs/rca/RCA-001-reconfig-transient-under-load.md`.
+**Last result (run for record, commit d716c1f):** Unloaded PASS: step 4.04 mm, overshoot 0.307 mm, settle 0.619 s. Rated OPEN DEFECT (expected fail, RCA-001), reason "RCA-001: integrator windup during rate saturation at rated load": step 4.06 mm, overshoot 0.922 mm (limit 0.60), settle 1.164 s (limit 0.80). See `docs/rca/RCA-001-reconfig-transient-under-load.md`.
 
 ---
 
@@ -244,7 +244,7 @@ Expected output: `2 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** every step gives its expected result in both cases. Each check is an `assert`; if any one fails, the test fails.
 
-**Last result (run for record, commit 19de3ef):** PASS, 2 of 2. Unloaded: step 4.04 mm, overshoot 0.259 mm, settle 0.527 s. Rated: step 4.03 mm, overshoot 0.017 mm, settle 0.366 s.
+**Last result (run for record, commit d716c1f):** PASS, 2 of 2. Unloaded: step 4.04 mm, overshoot 0.259 mm, settle 0.527 s. Rated: step 4.03 mm, overshoot 0.017 mm, settle 0.366 s.
 
 ---
 
@@ -287,4 +287,4 @@ Expected output: `1 passed`. (Partial run: report goes to `reports/dev/`, not fo
 
 **Pass criteria:** every step gives its expected result. Each check is an `assert`; if any one fails, the test fails.
 
-**Last result (run for record, commit 19de3ef):** PASS. Largest command 22.0 mm (limit 22.0), largest rate 60.0 mm/s (limit 60.0). Both sit exactly on the limit, which is what a clip does.
+**Last result (run for record, commit d716c1f):** PASS. Largest command 22.0 mm (limit 22.0), largest rate 60.0 mm/s (limit 60.0). Both sit exactly on the limit, which is what a clip does.

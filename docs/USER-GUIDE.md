@@ -299,7 +299,7 @@ The top of the file shows what kind of run it was and the **configuration eviden
 ```
 - Run: FULL RUN (127 of 127 tests), record
 - Git commit: `92ac2cb`
-- Config: `config/sil.yaml` (sha256 `baae11ef69bb`)
+- Config: `config/sil.yaml` (sha256 `f1bfb3f5a287`)
 - Requirements traced: 22/22 (100.0%)   <- L1/L2 (bench link) show NOT RUN if the Pi recordings are missing
 - Tests by level: Unit 47, System 73, Bench 7
 ```

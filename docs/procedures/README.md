@@ -4,7 +4,7 @@ Plain-language procedures for every automated test in this repo: purpose, setup,
 
 - **Levels:** **Unit** = one component alone (encoder, receiver, voter, actuator model, command law). **System** = components working together in closed loop. **Bench** = real hardware data (a Raspberry Pi sending channel A over a real Ethernet cable). The traceability matrix shows the same levels.
 - **TC IDs:** `TC-<requirement>-<U|S|B><nn>`, one per test function. A parametrized test (several cases, or both load conditions) is one TC with a table of its cases.
-- **Last result** in each TC comes from the run for record: FULL RUN, 127 of 127 tests (124 passed, 3 xfail), commit `19de3ef`, config `baae11ef69bb`, generated 2026-10-19T16:14:37 UTC. The bench TCs (Raspberry Pi) in that run replay the live recording in `bench_data/` (recorded 2026-10-19T16:12:43 UTC, Oct 19 morning Pacific). The official, current result is always the record: [reports/traceability.md](../../reports/traceability.md).
+- **Last result** in each TC comes from the run for record: FULL RUN, 127 of 127 tests (124 passed, 3 xfail), commit `d716c1f`, config `f1bfb3f5a287`, generated 2026-10-30T01:13:46 UTC. The bench TCs (Raspberry Pi) in that run replay the live recording in `bench_data/` (recorded 2026-10-19T16:12:43 UTC, Oct 19 morning Pacific). The official, current result is always the record: [reports/traceability.md](../../reports/traceability.md).
 - **Running one test** (the "How to run" line in each TC) is a partial run: its report goes to `reports/dev/`, not for record. The record is a full run on committed code (USER-GUIDE section 7).
 - **Plot data:** tests that are behind a figure also save the data they measured (`plot_data` fixture). Those steps say which file in `reports/data/` they write. The figures are drawn only from those files ([docs/EVIDENCE.md](../EVIDENCE.md)).
 - Lab-rig style procedure for the bandwidth test, written for real hardware: [TP-A4-bandwidth.md](TP-A4-bandwidth.md).
@@ -23,7 +23,7 @@ Plain-language procedures for every automated test in this repo: purpose, setup,
 
 ## Every test case
 
-| TC | Requirement(s) | Level | Test function | Cases | Last result (run for record, commit 19de3ef) |
+| TC | Requirement(s) | Level | Test function | Cases | Last result (run for record, commit d716c1f) |
 | --- | --- | --- | --- | --- | --- |
 | [TC-A1-U01](part-a-actuator.md#tc-a1-u01-small-1-mm-step-unloaded) | A1 | Unit | `test_a1_small_signal_step_unloaded` | 1 | PASS |
 | [TC-A2-U01](part-a-actuator.md#tc-a2-u01-maximum-extend-rate-unloaded-and-at-rated-load) | A2 | Unit | `test_a2_max_rate` | 2 | PASS (2 of 2) |

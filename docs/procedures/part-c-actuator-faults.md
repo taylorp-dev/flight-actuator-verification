@@ -2,7 +2,7 @@
 
 These tests cover faults inside the actuation system: losing one of two motor channels (R11), a jammed screw and the tracking monitor that must catch it without false alarms (R12), and three actuator lanes pushing on one surface (R13). Every test here is **System** level: the actuator model and its monitor run together in closed loop, the R13 tests use the three-lane force-fight model in `sil/force_fight.py`, and two R12 tests run the full Part B loop through `run_scenario()`. Test file: `tests/test_part_c_actuator_faults.py`.
 
-| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit 19de3ef) |
+| TC | Requirement(s) | Test function | Cases | Last result (run for record, commit d716c1f) |
 |---|---|---|---|---|
 | [TC-R11-S01](#tc-r11-s01-hold-position-after-losing-one-motor) | R11 | `test_r11_motor_channel_loss_hold` | 2 | 1 PASS, 1 OPEN DEFECT (FINDING-003) |
 | [TC-R11-S02](#tc-r11-s02-position-loss-after-a-motor-loss-is-annunciated) | R11 | `test_r11_if_position_is_lost_it_is_annunciated` | 2 | PASS |
@@ -60,7 +60,7 @@ Expected output: `1 passed, 1 xfailed`.
 
 **Cases** (set by `@pytest.mark.parametrize("load_name", ...)`, lines 67–71):
 
-| Case | Load | Expected | Last result (run for record, commit 19de3ef) |
+| Case | Load | Expected | Last result (run for record, commit d716c1f) |
 |---|---|---|---|
 | `unloaded` | 0 N | Pass | PASS. Stall force after loss 3250 N, max deviation 0.0 mm, monitor did not trip (`None`). |
 | `rated` | 4550 N | Expected fail (xfail), FINDING-003 | OPEN DEFECT (expected fail, FINDING-003): "FINDING-003: one motor's stall force is below rated load; rod is back-driven". Stall force after loss 3250 N, max deviation 1.697 mm, monitor tripped 2.97 s after the loss. |
@@ -82,7 +82,7 @@ Expected output: `1 passed, 1 xfailed`.
 
 **Pass criteria:** step 5 is `True`. For the `rated` case the test is marked as an expected failure: the case is reported as "xfailed" when step 5 is `False`, and the run fails if it unexpectedly passes (`xfail_strict = true` in pytest.ini).
 
-**Last result (run for record, commit 19de3ef):** unloaded PASS (0.0 mm). Rated OPEN DEFECT (expected fail, FINDING-003): rod drifted 1.697 mm, more than 3 times the 0.50 mm limit. See docs/rca/FINDING-003-motor-loss-at-rated-load.md.
+**Last result (run for record, commit d716c1f):** unloaded PASS (0.0 mm). Rated OPEN DEFECT (expected fail, FINDING-003): rod drifted 1.697 mm, more than 3 times the 0.50 mm limit. See docs/rca/FINDING-003-motor-loss-at-rated-load.md.
 
 ---
 
@@ -107,7 +107,7 @@ Expected output: `2 passed`.
 
 **Cases** (from the `load_condition` fixture):
 
-| Case | Load | Last result (run for record, commit 19de3ef) |
+| Case | Load | Last result (run for record, commit d716c1f) |
 |---|---|---|
 | `unloaded` | 0 N | PASS. Drifted past threshold: `False`; monitor did not trip (`None`). |
 | `rated` | 4550 N | PASS. Drifted past threshold: `True`; monitor tripped 2.97 s after the loss. |
@@ -125,7 +125,7 @@ Expected output: `2 passed`.
 
 **Pass criteria:** step 5 is `True` for both loads.
 
-**Last result (run for record, commit 19de3ef):** PASS on both loads. Unloaded: no drift, no trip. Rated: drift past 1.0 mm and the monitor tripped 2.97 s after the loss.
+**Last result (run for record, commit d716c1f):** PASS on both loads. Unloaded: no drift, no trip. Rated: drift past 1.0 mm and the monitor tripped 2.97 s after the loss.
 
 ---
 
@@ -150,7 +150,7 @@ Expected output: `2 passed`.
 
 **Cases** (from the `load_condition` fixture):
 
-| Case | Load | Last result (run for record, commit 19de3ef) |
+| Case | Load | Last result (run for record, commit d716c1f) |
 |---|---|---|
 | `unloaded` | 0 N | PASS. Stall force after loss 6500 N, max deviation 0.0 mm, monitor did not trip (`None`). |
 | `rated` | 4550 N | PASS. Stall force after loss 6500 N, max deviation 0.0 mm, monitor did not trip (`None`). |
@@ -168,7 +168,7 @@ Expected output: `2 passed`.
 
 **Pass criteria:** step 5 is `True` for both loads.
 
-**Last result (run for record, commit 19de3ef):** PASS on both loads, 0.0 mm deviation.
+**Last result (run for record, commit d716c1f):** PASS on both loads, 0.0 mm deviation.
 
 ---
 
@@ -193,7 +193,7 @@ Expected output: `6 passed`.
 
 **Cases** (load from the `load_condition` fixture × start position from `@pytest.mark.parametrize("start_mm", ...)`, line 125):
 
-| Case | Load | Start position | Last result (run for record, commit 19de3ef) |
+| Case | Load | Start position | Last result (run for record, commit d716c1f) |
 |---|---|---|---|
 | `unloaded-near-retract` | 0 N | -15.0 mm | PASS. Jam detected 0.171 s after the jam. |
 | `unloaded-mid` | 0 N | -5.0 mm | PASS. 0.171 s. |
@@ -224,7 +224,7 @@ Expected output: `6 passed`.
 
 **Pass criteria:** steps 3, 7, 8 and 9 are all `True` in every case.
 
-**Last result (run for record, commit 19de3ef):** PASS, all 6 cases. Detection 0.171 s in every case (limit 0.30 s).
+**Last result (run for record, commit d716c1f):** PASS, all 6 cases. Detection 0.171 s in every case (limit 0.30 s).
 
 ---
 
@@ -259,7 +259,7 @@ Expected output: `1 passed`.
 
 **Pass criteria:** step 3 is `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Annunciated: `False`.
+**Last result (run for record, commit d716c1f):** PASS. Annunciated: `False`.
 
 ---
 
@@ -297,7 +297,7 @@ Expected output: `1 passed`.
 
 **Pass criteria:** step 7 is `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Step 20.0 mm, no trip.
+**Last result (run for record, commit d716c1f):** PASS. Step 20.0 mm, no trip.
 
 ---
 
@@ -332,7 +332,7 @@ Expected output: `1 passed`.
 
 **Pass criteria:** step 5 is `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS (no measured values recorded).
+**Last result (run for record, commit d716c1f):** PASS (no measured values recorded).
 
 ---
 
@@ -357,7 +357,7 @@ Expected output: `4 passed`. Each case runs 48 full-system scenarios, about 2 s 
 
 **Cases** (load fractions from `actuator_monitor.envelope_load_fractions` = [0.0, 0.5, 0.75, 1.0], read at collection time by `_envelope_fractions()`, lines 219–221):
 
-| Case | Load | Scenarios | False alarms | Worst healthy error | Worst case | Margin | Last result (run for record, commit 19de3ef) |
+| Case | Load | Scenarios | False alarms | Worst healthy error | Worst case | Margin | Last result (run for record, commit d716c1f) |
 |---|---|---|---|---|---|---|---|
 | `0pct_rated` | 0 N | 48 | 0 | 0.659 mm | frozen-chB-maneuver | 0.341 mm | PASS |
 | `50pct_rated` | 2275 N | 48 | 0 | 0.659 mm | frozen-chB-maneuver | 0.341 mm | PASS |
@@ -384,7 +384,7 @@ Expected output: `4 passed`. Each case runs 48 full-system scenarios, about 2 s 
 
 **Pass criteria:** steps 6 and 7 are `True` in every case.
 
-**Last result (run for record, commit 19de3ef):** PASS, all 4 loads. 0 false alarms in 48 scenarios at each load; worst healthy error 0.659 mm (frozen-chB-maneuver), margin 0.341 mm.
+**Last result (run for record, commit d716c1f):** PASS, all 4 loads. 0 false alarms in 48 scenarios at each load; worst healthy error 0.659 mm (frozen-chB-maneuver), margin 0.341 mm.
 
 ---
 
@@ -419,7 +419,7 @@ Expected output: `1 xfailed`.
 
 **Pass criteria:** marked `xfail(strict=True)`. The test is reported as "xfailed" when step 4 is `False`. If step 4 becomes `True` the run fails as "XPASS", which signals the finding should be closed.
 
-**Last result (run for record, commit 19de3ef):** OPEN DEFECT (expected fail, FINDING-005): "FINDING-005: monitor needs the RCA-001 anti-windup fix; baseline windup gives false jam alarms". Load 3412 N, 2 false alarms, worst healthy error 4.895 mm (drift-chA-maneuver). See docs/rca/FINDING-005-jam-monitor-false-alarm.md.
+**Last result (run for record, commit d716c1f):** OPEN DEFECT (expected fail, FINDING-005): "FINDING-005: monitor needs the RCA-001 anti-windup fix; baseline windup gives false jam alarms". Load 3412 N, 2 false alarms, worst healthy error 4.895 mm (drift-chA-maneuver). See docs/rca/FINDING-005-jam-monitor-false-alarm.md.
 
 ---
 
@@ -461,7 +461,7 @@ Expected output: `1 passed`.
 
 **Pass criteria:** steps 5 and 6 are `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Max force fight 300 N.
+**Last result (run for record, commit d716c1f):** PASS. Max force fight 300 N.
 
 ---
 
@@ -498,7 +498,7 @@ Expected output: `1 passed`.
 
 **Pass criteria:** steps 4 and 5 are `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Max force fight 8454 N; lane 0 (A) disengaged at 0.67 s.
+**Last result (run for record, commit d716c1f):** PASS. Max force fight 8454 N; lane 0 (A) disengaged at 0.67 s.
 
 ---
 
@@ -523,7 +523,7 @@ Expected output: `15 passed`.
 
 **Cases** (3 lanes × offsets +2, -2, +5, -5, +10 mm from `FF_CASES`, line 304). "Disengaged" is the lane index and time after the fault (lane 0 = A, 1 = B, 2 = C):
 
-| Case | Lane | Offset | Disengaged | Peak surface (from 1.0 s) | Final surface | Last result (run for record, commit 19de3ef) |
+| Case | Lane | Offset | Disengaged | Peak surface (from 1.0 s) | Final surface | Last result (run for record, commit d716c1f) |
 |---|---|---|---|---|---|---|
 | `laneA+2mm` | A | +2.0 mm | lane 0 at 0.2 s | 0.83 mm | 0.1 mm | PASS |
 | `laneA-2mm` | A | -2.0 mm | lane 0 at 0.2 s | 0.74 mm | 0.1 mm | PASS |
@@ -557,7 +557,7 @@ Expected output: `15 passed`.
 
 **Pass criteria:** steps 4 and 5 are `True` in every case.
 
-**Last result (run for record, commit 19de3ef):** PASS, all 15 cases. The right lane every time, 0.2 s after the fault; final surface within 0.1 mm. Peak surface movement before disengage reached 3.69 mm on the 10 mm cases (no limit is checked on the peak; see the open item in FINDING-004).
+**Last result (run for record, commit d716c1f):** PASS, all 15 cases. The right lane every time, 0.2 s after the fault; final surface within 0.1 mm. Peak surface movement before disengage reached 3.69 mm on the 10 mm cases (no limit is checked on the peak; see the open item in FINDING-004).
 
 ---
 
@@ -582,7 +582,7 @@ Expected output: `6 passed`.
 
 **Cases** (from `@pytest.mark.parametrize("offset_mm", ...)`, line 328; each case runs lanes A, B and C):
 
-| Case | Offset | Worst undetected final surface | Last result (run for record, commit 19de3ef) |
+| Case | Offset | Worst undetected final surface | Last result (run for record, commit d716c1f) |
 |---|---|---|---|
 | `0.5` | +0.5 mm | 0.167 mm | PASS |
 | `1.0` | +1.0 mm | 0.333 mm | PASS |
@@ -605,7 +605,7 @@ Expected output: `6 passed`.
 
 **Pass criteria:** step 4 (when it applies) and step 6 are `True` in every case.
 
-**Last result (run for record, commit 19de3ef):** PASS, all 6 cases. Worst 0.533 mm at ±1.6 mm offset (limit 0.60 mm). Which lanes, if any, were disengaged is not recorded.
+**Last result (run for record, commit d716c1f):** PASS, all 6 cases. Worst 0.533 mm at ±1.6 mm offset (limit 0.60 mm). Which lanes, if any, were disengaged is not recorded.
 
 ---
 
@@ -644,4 +644,4 @@ Expected output: `1 passed`.
 
 **Pass criteria:** steps 4 and 7 are `True`.
 
-**Last result (run for record, commit 19de3ef):** PASS. Old logic dropped 3 lanes (defect reproduced). The fixed-logic result is checked but not recorded.
+**Last result (run for record, commit d716c1f):** PASS. Old logic dropped 3 lanes (defect reproduced). The fixed-logic result is checked but not recorded.
