@@ -2,7 +2,7 @@
 
 Model parameters come from the manufacturer datasheet (`config/sil.yaml`, `bench_actuator_l16p`). The model is checked against the datasheet by requirement M1. These are predictions only. The desk rig is not built yet; the last column is filled in when it is.
 
-- Config sha256: `f1bfb3f5a287`
+- Config sha256: `cf49a2d63e6a`
 - Planned bench spring load: 35 N
 
 | Measurement | Predicted | Same test as | Measured on bench |

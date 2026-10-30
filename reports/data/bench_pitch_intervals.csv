@@ -1,12 +1,12 @@
 # file: bench_pitch_intervals.csv
 # test: tests/test_bench_link.py::test_l1_cable_pull_flagged_stale_and_recovers
 # test_status: passed
-# run: FULL RUN (127 of 127 tests), record
+# run: FULL RUN (136 of 136 tests), record
 # run_type: FULL RUN
-# git_commit: d716c1f
+# git_commit: 497c118
 # record: True
-# config_sha256_12: f1bfb3f5a287
-# generated_utc: 2026-10-30T01:13:46+00:00
+# config_sha256_12: cf49a2d63e6a
+# generated_utc: 2026-10-30T02:02:12+00:00
 # nominal_interval_ms: 20.0
 # recorded_utc: 2026-10-19T16:12:43+00:00
 # sender: 192.168.2.1

@@ -1,12 +1,12 @@
 # file: a3_backlash_sine.csv
 # test: tests/test_part_a_actuator.py::test_a3_own_feedback_cannot_see_backlash
 # test_status: passed
-# run: FULL RUN (127 of 127 tests), record
+# run: FULL RUN (136 of 136 tests), record
 # run_type: FULL RUN
-# git_commit: d716c1f
+# git_commit: 497c118
 # record: True
-# config_sha256_12: f1bfb3f5a287
-# generated_utc: 2026-10-30T01:13:46+00:00
+# config_sha256_12: cf49a2d63e6a
+# generated_utc: 2026-10-30T02:02:12+00:00
 # period_s: 8.0
 # sine_truth_hysteresis_mm: 0.11264010917497355
 # sine_own_feedback_hysteresis_mm: 0.012640109174973558

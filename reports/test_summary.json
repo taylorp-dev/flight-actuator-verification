@@ -1,30 +1,30 @@
 {
   "summary": {
-    "generated_utc": "2026-10-30T01:13:46+00:00",
+    "generated_utc": "2026-10-30T02:02:12+00:00",
     "run_type": "FULL RUN",
-    "run_label": "FULL RUN (127 of 127 tests), record",
-    "git_commit": "d716c1f",
+    "run_label": "FULL RUN (136 of 136 tests), record",
+    "git_commit": "497c118",
     "record": true,
     "config_file": "config/sil.yaml",
-    "config_sha256_12": "f1bfb3f5a287",
+    "config_sha256_12": "cf49a2d63e6a",
     "airframe_icd": "Generic Rotorcraft A",
     "load_conditions": {
       "unloaded": 0.0,
       "rated": 4550.0
     },
     "python": "3.13.3",
-    "suite_runtime_s": 47.5,
-    "requirements_total": 22,
-    "requirements_traced": 22,
+    "suite_runtime_s": 67.5,
+    "requirements_total": 24,
+    "requirements_traced": 24,
     "requirements_traced_pct": 100.0,
-    "tests_total": 127,
+    "tests_total": 136,
     "tests_by_status": {
-      "passed": 124,
-      "xfail": 3
+      "passed": 132,
+      "xfail": 4
     },
     "tests_by_level": {
-      "Unit": 47,
-      "System": 73,
+      "Unit": 53,
+      "System": 76,
       "Bench": 7
     },
     "untagged_tests": []
@@ -55,11 +55,11 @@
     {
       "req": "A2",
       "stage": "Actuator",
-      "text": "Maximum rate shall be >= 35 mm/s unloaded and >= 10 mm/s at rated opposing load.",
+      "text": "Maximum rate shall be >= 35 mm/s unloaded, extending and retracting, and >= 10 mm/s at rated load in both directions (the load opposes extending and assists retracting).",
       "levels": "Unit",
-      "tests": 2,
-      "test_names": "test_a2_max_rate x2",
-      "passed": 2,
+      "tests": 4,
+      "test_names": "test_a2_max_rate x4",
+      "passed": 4,
       "verdict": "PASS",
       "notes": ""
     },
@@ -97,6 +97,17 @@
       "notes": ""
     },
     {
+      "req": "A6",
+      "stage": "Actuator",
+      "text": "Large-signal step response (4 mm, the size of a single-channel reconfiguration step) shall overshoot <= 10 %, unloaded and at rated opposing load.",
+      "levels": "Unit",
+      "tests": 4,
+      "test_names": "test_a6_large_step_baseline x2, test_a6_large_step_corrective_action x2",
+      "passed": 3,
+      "verdict": "OPEN DEFECT",
+      "notes": "RCA-001: integrator windup during rate saturation at rated load"
+    },
+    {
       "req": "M1",
       "stage": "Model",
       "text": "The bench actuator model (Actuonix L16-P) shall reproduce the manufacturer datasheet speed-force points within 5 % and use the datasheet backlash.",
@@ -123,9 +134,9 @@
       "stage": "Receiver",
       "text": "The receiver shall treat SSM Failure Warning or No Computed Data as invalid.",
       "levels": "Unit + System",
-      "tests": 6,
-      "test_names": "test_r2_ssm_invalid x2, test_r2_ssm_normal_valid, test_fault_matrix x3",
-      "passed": 6,
+      "tests": 9,
+      "test_names": "test_r2_ssm_invalid x2, test_r2_ssm_normal_valid, test_fault_matrix x6",
+      "passed": 9,
       "verdict": "PASS",
       "notes": ""
     },
@@ -189,9 +200,9 @@
       "stage": "Voter",
       "text": "After one channel failure, the voter shall continue on the remaining two and annunciate.",
       "levels": "Unit + System + Bench",
-      "tests": 25,
-      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x21, test_r8_dual_mode_average_and_annunciate, test_r8_second_fault_in_dual_is_annunciated, test_r8_invalid_channel_excluded",
-      "passed": 25,
+      "tests": 28,
+      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x24, test_r8_dual_mode_average_and_annunciate, test_r8_second_fault_in_dual_is_annunciated, test_r8_invalid_channel_excluded",
+      "passed": 28,
       "verdict": "PASS",
       "notes": ""
     },
@@ -211,9 +222,9 @@
       "stage": "System",
       "text": "The actuator command shall never exceed the position or rate limits, whatever the input.",
       "levels": "Unit + System + Bench",
-      "tests": 26,
-      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x24, test_r10_command_limits_worst_case_inputs",
-      "passed": 26,
+      "tests": 29,
+      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x27, test_r10_command_limits_worst_case_inputs",
+      "passed": 29,
       "verdict": "PASS",
       "notes": ""
     },
@@ -235,6 +246,17 @@
       "levels": "Bench",
       "tests": 1,
       "test_names": "test_l2_live_vs_replay_agree",
+      "passed": 1,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "L3",
+      "stage": "Bench link",
+      "text": "On a healthy link, the longest gap between words shall be <= 45 ms (25 % margin below the stale limit) and the 99th-percentile interval jitter shall be <= 15 ms.",
+      "levels": "Bench",
+      "tests": 1,
+      "test_names": "test_l1_rate_and_jitter_on_real_link",
       "passed": 1,
       "verdict": "PASS",
       "notes": ""
@@ -282,7 +304,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.015,
+      "duration_s": 0.013,
       "measured": {
         "words": 1438,
         "sender": "192.168.2.1",
@@ -294,17 +316,20 @@
     {
       "test": "tests/test_bench_link.py::test_l1_rate_and_jitter_on_real_link",
       "reqs": [
+        "L3",
         "L1"
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.024,
+      "duration_s": 0.02,
       "measured": {
         "intervals": 718,
         "mean_ms": 20.0,
         "p99_jitter_ms": 9.52,
         "max_interval_ms": 33.75,
         "stale_limit_ms": 60.0,
+        "max_gap_limit_ms": 45.0,
+        "p99_jitter_limit_ms": 15.0,
         "live_max_check_gap_ms": 20.61
       },
       "note": ""
@@ -317,7 +342,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.027,
+      "duration_s": 0.055,
       "measured": {
         "invalid_samples": 0,
         "live_false_stale": 0
@@ -332,7 +357,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.071,
+      "duration_s": 0.113,
       "measured": {
         "cable_out_s": 8.82,
         "flagged_after_ms": 60.6,
@@ -350,7 +375,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.867,
+      "duration_s": 0.834,
       "measured": {
         "replayed_s": 14.4,
         "max_voted_error_deg": 0.066
@@ -366,7 +391,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.968,
+      "duration_s": 0.755,
       "measured": {
         "modes_seen": [
           "DUAL",
@@ -384,7 +409,7 @@
       ],
       "level": "Bench",
       "status": "passed",
-      "duration_s": 0.079,
+      "duration_s": 0.069,
       "measured": {
         "words_live_vs_replay": "2321 vs 2321",
         "flag_ms_live_vs_replay": "61.1 vs 60.6",
@@ -404,7 +429,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.024,
+      "duration_s": 0.014,
       "measured": {
         "force_n": 0.0,
         "datasheet_mm_s": 32.0,
@@ -436,7 +461,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.017,
+      "duration_s": 0.011,
       "measured": {
         "force_n": 24.0,
         "datasheet_mm_s": 24.0,
@@ -452,7 +477,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.193,
+      "duration_s": 0.129,
       "measured": {
         "model_backlash_param_mm": 0.25,
         "predicted_bench_hysteresis_mm": 0.19
@@ -466,7 +491,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.011,
+      "duration_s": 0.023,
       "measured": {
         "rise_s": 0.108,
         "overshoot_pct": 4.4
@@ -474,30 +499,62 @@
       "note": ""
     },
     {
-      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[unloaded]",
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[unloaded-extend]",
       "reqs": [
         "A2"
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.017,
+      "duration_s": 0.021,
       "measured": {
         "load": "unloaded",
+        "direction": "extend",
         "rate_mm_s": 40.0
       },
       "note": ""
     },
     {
-      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[rated]",
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[unloaded-retract]",
       "reqs": [
         "A2"
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.018,
+      "duration_s": 0.019,
+      "measured": {
+        "load": "unloaded",
+        "direction": "retract",
+        "rate_mm_s": 40.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[rated-extend]",
+      "reqs": [
+        "A2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.012,
       "measured": {
         "load": "rated",
+        "direction": "extend",
         "rate_mm_s": 11.7
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[rated-retract]",
+      "reqs": [
+        "A2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.026,
+      "measured": {
+        "load": "rated",
+        "direction": "retract",
+        "rate_mm_s": 40.4
       },
       "note": ""
     },
@@ -508,7 +565,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.18,
+      "duration_s": 0.29,
       "measured": {
         "accuracy_mm": 0.05,
         "backlash_mm": 0.101
@@ -522,7 +579,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.255,
+      "duration_s": 0.168,
       "measured": {
         "own_feedback_hysteresis_mm": 0.001,
         "truth_hysteresis_mm": 0.101,
@@ -538,7 +595,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 2.306,
+      "duration_s": 2.065,
       "measured": {
         "load": "unloaded",
         "bandwidth_hz": 2.99
@@ -552,7 +609,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 2.132,
+      "duration_s": 3.008,
       "measured": {
         "load": "rated",
         "bandwidth_hz": 2.85
@@ -566,7 +623,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.008,
+      "duration_s": 0.02,
       "measured": {
         "rise_s": 0.108,
         "overshoot_pct": 5.1
@@ -580,9 +637,73 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.13,
+      "duration_s": 0.295,
       "measured": {
         "accuracy_mm": 0.051
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a6_large_step_baseline[unloaded]",
+      "reqs": [
+        "A6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.02,
+      "measured": {
+        "load": "unloaded",
+        "overshoot_pct": 9.5,
+        "overshoot_mm": 0.382,
+        "rise_s": 0.103
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a6_large_step_baseline[rated]",
+      "reqs": [
+        "A6"
+      ],
+      "level": "Unit",
+      "status": "xfail",
+      "duration_s": 0.034,
+      "measured": {
+        "load": "rated",
+        "overshoot_pct": 28.8,
+        "overshoot_mm": 1.152,
+        "rise_s": 0.275
+      },
+      "note": "RCA-001: integrator windup during rate saturation at rated load"
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a6_large_step_corrective_action[unloaded]",
+      "reqs": [
+        "A6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.029,
+      "measured": {
+        "load": "unloaded",
+        "overshoot_pct": 4.1,
+        "overshoot_mm": 0.164,
+        "rise_s": 0.119
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a6_large_step_corrective_action[rated]",
+      "reqs": [
+        "A6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.019,
+      "measured": {
+        "load": "rated",
+        "overshoot_pct": 0.3,
+        "overshoot_mm": 0.013,
+        "rise_s": 0.283
       },
       "note": ""
     },
@@ -806,11 +927,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.085,
+      "duration_s": 0.121,
       "measured": {
         "max_voted_error_deg": 0.69,
         "final_mode": "DUAL",
-        "detect_latency_ms": 1099
+        "detect_latency_ms": 1099,
+        "annunciations": "CHANNEL_FAILED:A,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -823,11 +945,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.069,
+      "duration_s": 0.088,
       "measured": {
         "max_voted_error_deg": 1.25,
         "final_mode": "DUAL",
-        "detect_latency_ms": 1459
+        "detect_latency_ms": 1459,
+        "annunciations": "CHANNEL_FAILED:B,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -840,11 +963,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.074,
+      "duration_s": 0.084,
       "measured": {
         "max_voted_error_deg": 1.25,
         "final_mode": "DUAL",
-        "detect_latency_ms": 1659
+        "detect_latency_ms": 1659,
+        "annunciations": "CHANNEL_FAILED:C,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -857,11 +981,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.081,
+      "duration_s": 0.123,
       "measured": {
         "max_voted_error_deg": 0.69,
         "final_mode": "DUAL",
-        "detect_latency_ms": 839
+        "detect_latency_ms": 839,
+        "annunciations": "CHANNEL_FAILED:A,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -874,11 +999,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.101,
+      "duration_s": 0.097,
       "measured": {
         "max_voted_error_deg": 1.25,
         "final_mode": "DUAL",
-        "detect_latency_ms": 1859
+        "detect_latency_ms": 1859,
+        "annunciations": "CHANNEL_FAILED:B,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -891,11 +1017,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.084,
+      "duration_s": 0.092,
       "measured": {
         "max_voted_error_deg": 1.25,
         "final_mode": "DUAL",
-        "detect_latency_ms": 2299
+        "detect_latency_ms": 2299,
+        "annunciations": "CHANNEL_FAILED:C,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -908,11 +1035,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.086,
+      "duration_s": 0.105,
       "measured": {
         "max_voted_error_deg": 0.69,
         "final_mode": "DUAL",
-        "detect_latency_ms": 99
+        "detect_latency_ms": 99,
+        "annunciations": "CHANNEL_FAILED:A,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -929,7 +1057,8 @@
       "measured": {
         "max_voted_error_deg": 0.96,
         "final_mode": "DUAL",
-        "detect_latency_ms": 99
+        "detect_latency_ms": 99,
+        "annunciations": "CHANNEL_FAILED:B,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -942,11 +1071,12 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.077,
+      "duration_s": 0.098,
       "measured": {
         "max_voted_error_deg": 0.96,
         "final_mode": "DUAL",
-        "detect_latency_ms": 99
+        "detect_latency_ms": 99,
+        "annunciations": "CHANNEL_FAILED:C,DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -958,10 +1088,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.082,
+      "duration_s": 0.113,
       "measured": {
         "max_voted_error_deg": 0.21,
-        "final_mode": "TRIPLEX"
+        "final_mode": "TRIPLEX",
+        "annunciations": "none"
       },
       "note": ""
     },
@@ -973,10 +1104,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.081,
+      "duration_s": 0.12,
       "measured": {
         "max_voted_error_deg": 0.94,
-        "final_mode": "TRIPLEX"
+        "final_mode": "TRIPLEX",
+        "annunciations": "none"
       },
       "note": ""
     },
@@ -988,10 +1120,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.08,
+      "duration_s": 0.138,
       "measured": {
         "max_voted_error_deg": 0.94,
-        "final_mode": "TRIPLEX"
+        "final_mode": "TRIPLEX",
+        "annunciations": "none"
       },
       "note": ""
     },
@@ -1004,10 +1137,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.076,
+      "duration_s": 0.167,
       "measured": {
         "max_voted_error_deg": 0.69,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1020,10 +1154,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.072,
+      "duration_s": 0.145,
       "measured": {
         "max_voted_error_deg": 0.24,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1036,10 +1171,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.07,
+      "duration_s": 0.176,
       "measured": {
         "max_voted_error_deg": 0.73,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1052,10 +1188,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.077,
+      "duration_s": 0.156,
       "measured": {
         "max_voted_error_deg": 0.69,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1068,10 +1205,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.085,
+      "duration_s": 0.107,
       "measured": {
         "max_voted_error_deg": 0.21,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1084,10 +1222,62 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.078,
+      "duration_s": 0.097,
       "measured": {
         "max_voted_error_deg": 0.73,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_ncd-chA]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.115,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_ncd-chB]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.132,
+      "measured": {
+        "max_voted_error_deg": 0.21,
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_ncd-chC]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.138,
+      "measured": {
+        "max_voted_error_deg": 0.73,
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1100,10 +1290,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.069,
+      "duration_s": 0.112,
       "measured": {
         "max_voted_error_deg": 0.69,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1116,10 +1307,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.064,
+      "duration_s": 0.096,
       "measured": {
         "max_voted_error_deg": 0.24,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1132,10 +1324,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.068,
+      "duration_s": 0.111,
       "measured": {
         "max_voted_error_deg": 0.73,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1148,10 +1341,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.068,
+      "duration_s": 0.095,
       "measured": {
         "max_voted_error_deg": 0.69,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1164,10 +1358,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.115,
+      "duration_s": 0.108,
       "measured": {
         "max_voted_error_deg": 0.21,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1180,10 +1375,11 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.117,
+      "duration_s": 0.094,
       "measured": {
         "max_voted_error_deg": 0.73,
-        "final_mode": "DUAL"
+        "final_mode": "DUAL",
+        "annunciations": "DEGRADED_DUAL"
       },
       "note": ""
     },
@@ -1194,7 +1390,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.185,
+      "duration_s": 0.178,
       "measured": {
         "old_threshold_deg": 2.0,
         "old_failed_channel": "C",
@@ -1212,7 +1408,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.2,
+      "duration_s": 0.089,
       "measured": {
         "load": "unloaded",
         "step_mm": 4.04,
@@ -1228,7 +1424,7 @@
       ],
       "level": "System",
       "status": "xfail",
-      "duration_s": 0.317,
+      "duration_s": 0.143,
       "measured": {
         "load": "rated",
         "step_mm": 4.06,
@@ -1244,7 +1440,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.196,
+      "duration_s": 0.185,
       "measured": {
         "load": "unloaded",
         "step_mm": 4.04,
@@ -1260,7 +1456,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.185,
+      "duration_s": 0.198,
       "measured": {
         "load": "rated",
         "step_mm": 4.03,
@@ -1276,7 +1472,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.006,
+      "duration_s": 0.008,
       "measured": {
         "max_cmd_mm": 22.0,
         "max_rate_mm_s": 60.0
@@ -1290,7 +1486,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.0,
+      "duration_s": 0.001,
       "measured": {},
       "note": ""
     },
@@ -1382,7 +1578,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.001,
+      "duration_s": 0.002,
       "measured": {},
       "note": ""
     },
@@ -1393,7 +1589,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.0,
+      "duration_s": 0.001,
       "measured": {},
       "note": ""
     },
@@ -1404,7 +1600,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.0,
+      "duration_s": 0.001,
       "measured": {},
       "note": ""
     },
@@ -1415,7 +1611,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.0,
+      "duration_s": 0.001,
       "measured": {},
       "note": ""
     },
@@ -1426,7 +1622,7 @@
       ],
       "level": "Unit",
       "status": "passed",
-      "duration_s": 0.0,
+      "duration_s": 0.001,
       "measured": {},
       "note": ""
     },
@@ -1448,7 +1644,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.073,
+      "duration_s": 0.061,
       "measured": {
         "load_n": 0.0,
         "stall_after_loss_n": 3250,
@@ -1464,7 +1660,7 @@
       ],
       "level": "System",
       "status": "xfail",
-      "duration_s": 0.074,
+      "duration_s": 0.056,
       "measured": {
         "load_n": 4550.0,
         "stall_after_loss_n": 3250,
@@ -1480,7 +1676,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.067,
+      "duration_s": 0.046,
       "measured": {
         "load": "unloaded",
         "drifted_past_threshold": false,
@@ -1495,7 +1691,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.038,
+      "duration_s": 0.044,
       "measured": {
         "load": "rated",
         "drifted_past_threshold": true,
@@ -1510,7 +1706,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.036,
+      "duration_s": 0.045,
       "measured": {
         "load": "unloaded",
         "load_n": 0.0,
@@ -1527,7 +1723,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.04,
+      "duration_s": 0.044,
       "measured": {
         "load": "rated",
         "load_n": 4550.0,
@@ -1544,7 +1740,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.011,
+      "duration_s": 0.016,
       "measured": {
         "load": "unloaded",
         "jam_detect_s": 0.171
@@ -1558,7 +1754,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.018,
+      "duration_s": 0.013,
       "measured": {
         "load": "unloaded",
         "jam_detect_s": 0.171
@@ -1572,7 +1768,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.01,
+      "duration_s": 0.009,
       "measured": {
         "load": "unloaded",
         "jam_detect_s": 0.171
@@ -1600,7 +1796,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.014,
+      "duration_s": 0.018,
       "measured": {
         "load": "rated",
         "jam_detect_s": 0.171
@@ -1614,7 +1810,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.009,
+      "duration_s": 0.013,
       "measured": {
         "load": "rated",
         "jam_detect_s": 0.171
@@ -1628,7 +1824,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.014,
+      "duration_s": 0.015,
       "measured": {
         "annunciated": false
       },
@@ -1641,7 +1837,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.042,
+      "duration_s": 0.064,
       "measured": {
         "step_mm": 20.0
       },
@@ -1654,7 +1850,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.018,
+      "duration_s": 0.038,
       "measured": {},
       "note": ""
     },
@@ -1665,10 +1861,10 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 3.406,
+      "duration_s": 4.04,
       "measured": {
         "load_n": 0,
-        "cases": 48,
+        "cases": 54,
         "false_alarms": 0,
         "worst_healthy_mm": 0.659,
         "worst_case": "frozen-chB-maneuver",
@@ -1683,10 +1879,10 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 3.79,
+      "duration_s": 4.174,
       "measured": {
         "load_n": 2275,
-        "cases": 48,
+        "cases": 54,
         "false_alarms": 0,
         "worst_healthy_mm": 0.659,
         "worst_case": "frozen-chB-maneuver",
@@ -1701,10 +1897,10 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 2.949,
+      "duration_s": 4.052,
       "measured": {
         "load_n": 3412,
-        "cases": 48,
+        "cases": 54,
         "false_alarms": 0,
         "worst_healthy_mm": 0.659,
         "worst_case": "frozen-chB-maneuver",
@@ -1719,10 +1915,10 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 3.12,
+      "duration_s": 4.397,
       "measured": {
         "load_n": 4550,
-        "cases": 48,
+        "cases": 54,
         "false_alarms": 0,
         "worst_healthy_mm": 0.659,
         "worst_case": "frozen-chB-maneuver",
@@ -1737,7 +1933,7 @@
       ],
       "level": "System",
       "status": "xfail",
-      "duration_s": 3.167,
+      "duration_s": 5.013,
       "measured": {
         "load_n": 3412,
         "false_alarms": 2,
@@ -1753,7 +1949,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.376,
+      "duration_s": 2.122,
       "measured": {
         "max_fight_n": 300
       },
@@ -1766,7 +1962,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.002,
+      "duration_s": 1.344,
       "measured": {
         "max_fight_n": 8454,
         "healthy_lane_disengaged_at_s": {
@@ -1782,7 +1978,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.45,
+      "duration_s": 0.806,
       "measured": {
         "disengaged": {
           "0": 0.2
@@ -1799,7 +1995,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.552,
+      "duration_s": 0.563,
       "measured": {
         "disengaged": {
           "0": 0.2
@@ -1816,7 +2012,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.472,
+      "duration_s": 0.63,
       "measured": {
         "disengaged": {
           "0": 0.2
@@ -1833,7 +2029,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.562,
+      "duration_s": 0.844,
       "measured": {
         "disengaged": {
           "0": 0.2
@@ -1850,7 +2046,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.453,
+      "duration_s": 0.934,
       "measured": {
         "disengaged": {
           "0": 0.2
@@ -1867,7 +2063,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.405,
+      "duration_s": 0.705,
       "measured": {
         "disengaged": {
           "1": 0.2
@@ -1884,7 +2080,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.401,
+      "duration_s": 0.611,
       "measured": {
         "disengaged": {
           "1": 0.2
@@ -1901,7 +2097,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.405,
+      "duration_s": 0.804,
       "measured": {
         "disengaged": {
           "1": 0.2
@@ -1918,7 +2114,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.412,
+      "duration_s": 0.571,
       "measured": {
         "disengaged": {
           "1": 0.2
@@ -1935,7 +2131,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.473,
+      "duration_s": 0.525,
       "measured": {
         "disengaged": {
           "1": 0.2
@@ -1952,7 +2148,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.391,
+      "duration_s": 0.664,
       "measured": {
         "disengaged": {
           "2": 0.2
@@ -1969,7 +2165,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.398,
+      "duration_s": 0.807,
       "measured": {
         "disengaged": {
           "2": 0.2
@@ -1986,7 +2182,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.382,
+      "duration_s": 0.778,
       "measured": {
         "disengaged": {
           "2": 0.2
@@ -2003,7 +2199,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.39,
+      "duration_s": 0.925,
       "measured": {
         "disengaged": {
           "2": 0.2
@@ -2020,7 +2216,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.389,
+      "duration_s": 0.954,
       "measured": {
         "disengaged": {
           "2": 0.2
@@ -2037,7 +2233,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.542,
+      "duration_s": 3.386,
       "measured": {
         "worst_undetected_surface_mm": 0.167
       },
@@ -2050,7 +2246,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.538,
+      "duration_s": 2.875,
       "measured": {
         "worst_undetected_surface_mm": 0.333
       },
@@ -2063,7 +2259,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.395,
+      "duration_s": 2.257,
       "measured": {
         "worst_undetected_surface_mm": 0.5
       },
@@ -2076,7 +2272,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.425,
+      "duration_s": 2.188,
       "measured": {
         "worst_undetected_surface_mm": 0.5
       },
@@ -2089,7 +2285,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.57,
+      "duration_s": 2.52,
       "measured": {
         "worst_undetected_surface_mm": 0.533
       },
@@ -2102,7 +2298,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 1.4,
+      "duration_s": 2.535,
       "measured": {
         "worst_undetected_surface_mm": 0.533
       },
@@ -2115,7 +2311,7 @@
       ],
       "level": "System",
       "status": "passed",
-      "duration_s": 0.544,
+      "duration_s": 1.088,
       "measured": {
         "old_logic_lanes_disengaged": 3
       },

@@ -1,0 +1,17 @@
+# file: fault_matrix_ssm_ncd_chA.csv
+# test: tests/test_part_b_system.py::test_fault_matrix[ssm_ncd-chA]
+# test_status: passed
+# run: FULL RUN (136 of 136 tests), record
+# run_type: FULL RUN
+# git_commit: 497c118
+# record: True
+# config_sha256_12: cf49a2d63e6a
+# generated_utc: 2026-10-30T02:02:12+00:00
+# kind: ssm_ncd
+# channel: A
+# expect: exclude
+# failed: none
+# excluded_by_receiver: True
+# detect_latency_ms: None
+# max_voted_error_deg: 0.6897466872347868
+# final_mode: DUAL
