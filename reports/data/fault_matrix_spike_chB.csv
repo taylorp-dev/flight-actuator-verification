@@ -1,0 +1,17 @@
+# file: fault_matrix_spike_chB.csv
+# test: tests/test_part_b_system.py::test_fault_matrix[spike-chB]
+# test_status: passed
+# run: FULL RUN (127 of 127 tests), record
+# run_type: FULL RUN
+# git_commit: d716c1f
+# record: True
+# config_sha256_12: f1bfb3f5a287
+# generated_utc: 2026-10-30T01:13:46+00:00
+# kind: spike
+# channel: B
+# expect: ignore
+# failed: none
+# excluded_by_receiver: False
+# detect_latency_ms: None
+# max_voted_error_deg: 0.9395884409513444
+# final_mode: TRIPLEX

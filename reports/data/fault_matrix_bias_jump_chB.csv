@@ -1,0 +1,17 @@
+# file: fault_matrix_bias_jump_chB.csv
+# test: tests/test_part_b_system.py::test_fault_matrix[bias_jump-chB]
+# test_status: passed
+# run: FULL RUN (127 of 127 tests), record
+# run_type: FULL RUN
+# git_commit: d716c1f
+# record: True
+# config_sha256_12: f1bfb3f5a287
+# generated_utc: 2026-10-30T01:13:46+00:00
+# kind: bias_jump
+# channel: B
+# expect: isolate
+# failed: B
+# excluded_by_receiver: False
+# detect_latency_ms: 99
+# max_voted_error_deg: 0.9641708108038576
+# final_mode: DUAL

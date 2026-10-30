@@ -1,0 +1,2125 @@
+{
+  "summary": {
+    "generated_utc": "2026-10-30T01:13:46+00:00",
+    "run_type": "FULL RUN",
+    "run_label": "FULL RUN (127 of 127 tests), record",
+    "git_commit": "d716c1f",
+    "record": true,
+    "config_file": "config/sil.yaml",
+    "config_sha256_12": "f1bfb3f5a287",
+    "airframe_icd": "Generic Rotorcraft A",
+    "load_conditions": {
+      "unloaded": 0.0,
+      "rated": 4550.0
+    },
+    "python": "3.13.3",
+    "suite_runtime_s": 47.5,
+    "requirements_total": 22,
+    "requirements_traced": 22,
+    "requirements_traced_pct": 100.0,
+    "tests_total": 127,
+    "tests_by_status": {
+      "passed": 124,
+      "xfail": 3
+    },
+    "tests_by_level": {
+      "Unit": 47,
+      "System": 73,
+      "Bench": 7
+    },
+    "untagged_tests": []
+  },
+  "requirements": [
+    {
+      "req": "ICD-1",
+      "stage": "Interface",
+      "text": "ARINC 429 BNR words shall be encoded per the ICD (label, SDI, sign, resolution, SSM, odd parity).",
+      "levels": "Unit + Bench",
+      "tests": 11,
+      "test_names": "test_l1_words_on_the_wire_decode_per_icd, test_icd_bnr_round_trip x8, test_icd_label_bits_are_reversed, test_icd_odd_parity",
+      "passed": 11,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "A1",
+      "stage": "Actuator",
+      "text": "Small-signal step response (1 mm, unloaded) shall have rise time <= 0.15 s and overshoot <= 10 %.",
+      "levels": "Unit",
+      "tests": 1,
+      "test_names": "test_a1_small_signal_step_unloaded",
+      "passed": 1,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "A2",
+      "stage": "Actuator",
+      "text": "Maximum rate shall be >= 35 mm/s unloaded and >= 10 mm/s at rated opposing load.",
+      "levels": "Unit",
+      "tests": 2,
+      "test_names": "test_a2_max_rate x2",
+      "passed": 2,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "A3",
+      "stage": "Actuator",
+      "text": "Static position accuracy shall be <= 0.10 mm and backlash <= 0.15 mm, measured at the output rod.",
+      "levels": "Unit",
+      "tests": 2,
+      "test_names": "test_a3_accuracy_and_backlash, test_a3_own_feedback_cannot_see_backlash",
+      "passed": 2,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "A4",
+      "stage": "Actuator",
+      "text": "Position bandwidth (-3 dB) shall be >= 2.5 Hz.",
+      "levels": "Unit",
+      "tests": 2,
+      "test_names": "test_a4_bandwidth x2",
+      "passed": 2,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "A5",
+      "stage": "Actuator",
+      "text": "At rated opposing load, small-signal step overshoot shall be <= 10 %, rise time <= 0.15 s, accuracy <= 0.10 mm.",
+      "levels": "Unit",
+      "tests": 2,
+      "test_names": "test_a5_small_signal_step_rated_load, test_a5_accuracy_rated_load",
+      "passed": 2,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "M1",
+      "stage": "Model",
+      "text": "The bench actuator model (Actuonix L16-P) shall reproduce the manufacturer datasheet speed-force points within 5 % and use the datasheet backlash.",
+      "levels": "Unit",
+      "tests": 4,
+      "test_names": "test_m1_speed_force_matches_datasheet x3, test_m1_backlash_matches_datasheet",
+      "passed": 4,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R1",
+      "stage": "Receiver",
+      "text": "The receiver shall reject words with bad parity.",
+      "levels": "Unit + System",
+      "tests": 4,
+      "test_names": "test_r1_bad_parity_rejected, test_fault_matrix x3",
+      "passed": 4,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R2",
+      "stage": "Receiver",
+      "text": "The receiver shall treat SSM Failure Warning or No Computed Data as invalid.",
+      "levels": "Unit + System",
+      "tests": 6,
+      "test_names": "test_r2_ssm_invalid x2, test_r2_ssm_normal_valid, test_fault_matrix x3",
+      "passed": 6,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R3",
+      "stage": "Receiver",
+      "text": "The receiver shall declare a label stale if not updated within 3 nominal transmit intervals.",
+      "levels": "Unit + System + Bench",
+      "tests": 6,
+      "test_names": "test_l1_no_false_stale_on_healthy_link, test_l1_cable_pull_flagged_stale_and_recovers, test_r3_stale_boundary, test_fault_matrix x3",
+      "passed": 6,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R4",
+      "stage": "Receiver",
+      "text": "The receiver shall reject values outside the physical range.",
+      "levels": "Unit + System",
+      "tests": 7,
+      "test_names": "test_r4_physical_range x4, test_fault_matrix x3",
+      "passed": 7,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R5",
+      "stage": "Voter",
+      "text": "With three valid sources, the voter shall output the middle value.",
+      "levels": "Unit + Bench",
+      "tests": 7,
+      "test_names": "test_l1_closed_loop_with_real_channel_a, test_r5_mid_value_select x6",
+      "passed": 7,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R6",
+      "stage": "Voter",
+      "text": "The voter shall fail a channel that miscompares beyond threshold for longer than the persistence time.",
+      "levels": "Unit + System",
+      "tests": 13,
+      "test_names": "test_fault_matrix x9, test_finding002_reproduced_at_old_threshold, test_r6_fail_after_persistence, test_r6_threshold_has_margin_over_tolerance_stack, test_r6_within_threshold_never_fails",
+      "passed": 13,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R7",
+      "stage": "Voter",
+      "text": "The voter shall not fail a channel on a single short spike.",
+      "levels": "Unit + System",
+      "tests": 5,
+      "test_names": "test_fault_matrix x3, test_r7_single_spike_ignored, test_r7_intermittent_spikes_reset_counter",
+      "passed": 5,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R8",
+      "stage": "Voter",
+      "text": "After one channel failure, the voter shall continue on the remaining two and annunciate.",
+      "levels": "Unit + System + Bench",
+      "tests": 25,
+      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x21, test_r8_dual_mode_average_and_annunciate, test_r8_second_fault_in_dual_is_annunciated, test_r8_invalid_channel_excluded",
+      "passed": 25,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R9",
+      "stage": "System",
+      "text": "After a single-channel failure, the actuator reconfiguration transient shall overshoot <= 0.60 mm and settle within +/-0.25 mm in <= 0.80 s.",
+      "levels": "System",
+      "tests": 4,
+      "test_names": "test_r9_reconfiguration_transient_baseline x2, test_r9_corrective_action_verified x2",
+      "passed": 3,
+      "verdict": "OPEN DEFECT",
+      "notes": "RCA-001: integrator windup during rate saturation at rated load"
+    },
+    {
+      "req": "R10",
+      "stage": "System",
+      "text": "The actuator command shall never exceed the position or rate limits, whatever the input.",
+      "levels": "Unit + System + Bench",
+      "tests": 26,
+      "test_names": "test_l1_closed_loop_cable_pull, test_fault_matrix x24, test_r10_command_limits_worst_case_inputs",
+      "passed": 26,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "L1",
+      "stage": "Bench link",
+      "text": "Channel A sent from a separate computer over a real Ethernet link shall decode per the ICD, arrive at the nominal label rate (mean interval within 2 %) without gaps long enough to trip the stale check, and a link loss shall be flagged stale within 3 intervals and recover automatically.",
+      "levels": "Bench",
+      "tests": 6,
+      "test_names": "test_l1_words_on_the_wire_decode_per_icd, test_l1_rate_and_jitter_on_real_link, test_l1_no_false_stale_on_healthy_link, test_l1_cable_pull_flagged_stale_and_recovers, test_l1_closed_loop_with_real_channel_a, test_l1_closed_loop_cable_pull",
+      "passed": 6,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "L2",
+      "stage": "Bench link",
+      "text": "The bench link checks shall also run live, during the capture, and the live results shall agree with the replay of the same recording (same words, fingerprint of the saved recording; no decode errors; no false stale anywhere outside the link drop; stale flag and recovery times within 5 ms).",
+      "levels": "Bench",
+      "tests": 1,
+      "test_names": "test_l2_live_vs_replay_agree",
+      "passed": 1,
+      "verdict": "PASS",
+      "notes": ""
+    },
+    {
+      "req": "R11",
+      "stage": "Actuator fault",
+      "text": "After loss of one of two motor channels, the actuator shall hold commanded position within 0.50 mm for 5 s at every load condition up to rated.",
+      "levels": "System",
+      "tests": 6,
+      "test_names": "test_r11_motor_channel_loss_hold x2, test_r11_if_position_is_lost_it_is_annunciated x2, test_r11_corrective_option_verified x2",
+      "passed": 5,
+      "verdict": "OPEN DEFECT",
+      "notes": "FINDING-003: one motor's stall force is below rated load; rod is back-driven"
+    },
+    {
+      "req": "R12",
+      "stage": "Actuator fault",
+      "text": "The actuator monitor shall annunciate a jam within 0.30 s while the command is moving, remove motor drive, and not annunciate during normal operation (including rate-limited moves at rated load and all Part B fault cases).",
+      "levels": "System",
+      "tests": 14,
+      "test_names": "test_r12_jam_detected_and_drive_removed x6, test_r12_jam_with_stationary_command_is_latent, test_r12_no_false_alarm_on_rate_limited_move_at_rated_load, test_r12_no_false_alarm_on_bandwidth_sine, test_r12_no_false_alarm_across_part_b_faults x4, test_r12_no_false_alarm_baseline_actuator",
+      "passed": 13,
+      "verdict": "OPEN DEFECT",
+      "notes": "FINDING-005: monitor needs the RCA-001 anti-windup fix; baseline windup gives false jam alarms"
+    },
+    {
+      "req": "R13",
+      "stage": "Actuator fault",
+      "text": "With three lanes active on one surface, equalization shall keep force fight between healthy lanes <= 500 N; a faulty lane shall be disengaged (only that lane) with surface error <= 0.25 mm after; a lane fault too small to detect shall cause <= 0.60 mm surface error.",
+      "levels": "System",
+      "tests": 24,
+      "test_names": "test_r13_healthy_lanes_share_load_with_equalization, test_r13_without_equalization_healthy_lanes_fight_and_trip, test_r13_faulty_lane_disengaged x15, test_r13_undetected_lane_fault_stays_small x6, test_r13_guard_monitor_isolates_only_the_largest_outlier",
+      "passed": 24,
+      "verdict": "PASS",
+      "notes": ""
+    }
+  ],
+  "results": [
+    {
+      "test": "tests/test_bench_link.py::test_l1_words_on_the_wire_decode_per_icd",
+      "reqs": [
+        "L1",
+        "ICD-1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.015,
+      "measured": {
+        "words": 1438,
+        "sender": "192.168.2.1",
+        "pitch_mean_deg": -0.999,
+        "live_decode_errors": 0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l1_rate_and_jitter_on_real_link",
+      "reqs": [
+        "L1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.024,
+      "measured": {
+        "intervals": 718,
+        "mean_ms": 20.0,
+        "p99_jitter_ms": 9.52,
+        "max_interval_ms": 33.75,
+        "stale_limit_ms": 60.0,
+        "live_max_check_gap_ms": 20.61
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l1_no_false_stale_on_healthy_link",
+      "reqs": [
+        "R3",
+        "L1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.027,
+      "measured": {
+        "invalid_samples": 0,
+        "live_false_stale": 0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l1_cable_pull_flagged_stale_and_recovers",
+      "reqs": [
+        "R3",
+        "L1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.071,
+      "measured": {
+        "cable_out_s": 8.82,
+        "flagged_after_ms": 60.6,
+        "recovered_after_reconnect_ms": 0.5,
+        "live_flagged_after_ms": 61.1,
+        "live_recovered_after_reconnect_ms": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l1_closed_loop_with_real_channel_a",
+      "reqs": [
+        "R5",
+        "L1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.867,
+      "measured": {
+        "replayed_s": 14.4,
+        "max_voted_error_deg": 0.066
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l1_closed_loop_cable_pull",
+      "reqs": [
+        "R10",
+        "R8",
+        "L1"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.968,
+      "measured": {
+        "modes_seen": [
+          "DUAL",
+          "TRIPLEX"
+        ],
+        "ended_in": "TRIPLEX",
+        "actuator_span_mm": 2.342
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_bench_link.py::test_l2_live_vs_replay_agree",
+      "reqs": [
+        "L2"
+      ],
+      "level": "Bench",
+      "status": "passed",
+      "duration_s": 0.079,
+      "measured": {
+        "words_live_vs_replay": "2321 vs 2321",
+        "flag_ms_live_vs_replay": "61.1 vs 60.6",
+        "recover_ms_live_vs_replay": "0.1 vs 0.5",
+        "flag_diff_ms": 0.5,
+        "recover_diff_ms": 0.4,
+        "live_max_check_gap_ms": 20.61,
+        "false_stale_live_vs_replay": "0 vs 0",
+        "tol_ms": 5.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_model_bench_actuator.py::test_m1_speed_force_matches_datasheet[no_load]",
+      "reqs": [
+        "M1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.024,
+      "measured": {
+        "force_n": 0.0,
+        "datasheet_mm_s": 32.0,
+        "model_mm_s": 32.0,
+        "error_pct": 0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_model_bench_actuator.py::test_m1_speed_force_matches_datasheet[peak_power]",
+      "reqs": [
+        "M1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.014,
+      "measured": {
+        "force_n": 50.0,
+        "datasheet_mm_s": 16.0,
+        "model_mm_s": 15.5,
+        "error_pct": 3.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_model_bench_actuator.py::test_m1_speed_force_matches_datasheet[peak_efficiency]",
+      "reqs": [
+        "M1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.017,
+      "measured": {
+        "force_n": 24.0,
+        "datasheet_mm_s": 24.0,
+        "model_mm_s": 24.1,
+        "error_pct": 0.3
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_model_bench_actuator.py::test_m1_backlash_matches_datasheet",
+      "reqs": [
+        "M1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.193,
+      "measured": {
+        "model_backlash_param_mm": 0.25,
+        "predicted_bench_hysteresis_mm": 0.19
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a1_small_signal_step_unloaded",
+      "reqs": [
+        "A1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.011,
+      "measured": {
+        "rise_s": 0.108,
+        "overshoot_pct": 4.4
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[unloaded]",
+      "reqs": [
+        "A2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.017,
+      "measured": {
+        "load": "unloaded",
+        "rate_mm_s": 40.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a2_max_rate[rated]",
+      "reqs": [
+        "A2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.018,
+      "measured": {
+        "load": "rated",
+        "rate_mm_s": 11.7
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a3_accuracy_and_backlash",
+      "reqs": [
+        "A3"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.18,
+      "measured": {
+        "accuracy_mm": 0.05,
+        "backlash_mm": 0.101
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a3_own_feedback_cannot_see_backlash",
+      "reqs": [
+        "A3"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.255,
+      "measured": {
+        "own_feedback_hysteresis_mm": 0.001,
+        "truth_hysteresis_mm": 0.101,
+        "sine_truth_hysteresis_mm": 0.113,
+        "sine_own_feedback_hysteresis_mm": 0.013
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a4_bandwidth[unloaded]",
+      "reqs": [
+        "A4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 2.306,
+      "measured": {
+        "load": "unloaded",
+        "bandwidth_hz": 2.99
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a4_bandwidth[rated]",
+      "reqs": [
+        "A4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 2.132,
+      "measured": {
+        "load": "rated",
+        "bandwidth_hz": 2.85
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a5_small_signal_step_rated_load",
+      "reqs": [
+        "A5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.008,
+      "measured": {
+        "rise_s": 0.108,
+        "overshoot_pct": 5.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_a_actuator.py::test_a5_accuracy_rated_load",
+      "reqs": [
+        "A5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.13,
+      "measured": {
+        "accuracy_mm": 0.051
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[0.0]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[2.5]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[-2.5]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[45.37]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[-89.99]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[89.99]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[179.9]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_bnr_round_trip[-180.0]",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_label_bits_are_reversed",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_icd_odd_parity",
+      "reqs": [
+        "ICD-1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r1_bad_parity_rejected",
+      "reqs": [
+        "R1"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r2_ssm_invalid[0]",
+      "reqs": [
+        "R2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r2_ssm_invalid[1]",
+      "reqs": [
+        "R2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r2_ssm_normal_valid",
+      "reqs": [
+        "R2"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r3_stale_boundary",
+      "reqs": [
+        "R3"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {
+        "stale_limit_ms": 60.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r4_physical_range[90.0-True]",
+      "reqs": [
+        "R4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r4_physical_range[-90.0-True]",
+      "reqs": [
+        "R4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r4_physical_range[90.5-False]",
+      "reqs": [
+        "R4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_receiver.py::test_r4_physical_range[-120.0-False]",
+      "reqs": [
+        "R4"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[frozen-chA]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.085,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 1099
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[frozen-chB]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.069,
+      "measured": {
+        "max_voted_error_deg": 1.25,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 1459
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[frozen-chC]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.074,
+      "measured": {
+        "max_voted_error_deg": 1.25,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 1659
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[drift-chA]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.081,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 839
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[drift-chB]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.101,
+      "measured": {
+        "max_voted_error_deg": 1.25,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 1859
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[drift-chC]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.084,
+      "measured": {
+        "max_voted_error_deg": 1.25,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 2299
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bias_jump-chA]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.086,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 99
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bias_jump-chB]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.08,
+      "measured": {
+        "max_voted_error_deg": 0.96,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 99
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bias_jump-chC]",
+      "reqs": [
+        "R6",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.077,
+      "measured": {
+        "max_voted_error_deg": 0.96,
+        "final_mode": "DUAL",
+        "detect_latency_ms": 99
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[spike-chA]",
+      "reqs": [
+        "R7",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.082,
+      "measured": {
+        "max_voted_error_deg": 0.21,
+        "final_mode": "TRIPLEX"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[spike-chB]",
+      "reqs": [
+        "R7",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.081,
+      "measured": {
+        "max_voted_error_deg": 0.94,
+        "final_mode": "TRIPLEX"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[spike-chC]",
+      "reqs": [
+        "R7",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.08,
+      "measured": {
+        "max_voted_error_deg": 0.94,
+        "final_mode": "TRIPLEX"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bad_parity-chA]",
+      "reqs": [
+        "R1",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.076,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bad_parity-chB]",
+      "reqs": [
+        "R1",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.072,
+      "measured": {
+        "max_voted_error_deg": 0.24,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[bad_parity-chC]",
+      "reqs": [
+        "R1",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.07,
+      "measured": {
+        "max_voted_error_deg": 0.73,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_fail-chA]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.077,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_fail-chB]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.085,
+      "measured": {
+        "max_voted_error_deg": 0.21,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[ssm_fail-chC]",
+      "reqs": [
+        "R2",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.078,
+      "measured": {
+        "max_voted_error_deg": 0.73,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[dropout-chA]",
+      "reqs": [
+        "R3",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.069,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[dropout-chB]",
+      "reqs": [
+        "R3",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.064,
+      "measured": {
+        "max_voted_error_deg": 0.24,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[dropout-chC]",
+      "reqs": [
+        "R3",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.068,
+      "measured": {
+        "max_voted_error_deg": 0.73,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[out_of_range-chA]",
+      "reqs": [
+        "R4",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.068,
+      "measured": {
+        "max_voted_error_deg": 0.69,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[out_of_range-chB]",
+      "reqs": [
+        "R4",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.115,
+      "measured": {
+        "max_voted_error_deg": 0.21,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_fault_matrix[out_of_range-chC]",
+      "reqs": [
+        "R4",
+        "R8",
+        "R10"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.117,
+      "measured": {
+        "max_voted_error_deg": 0.73,
+        "final_mode": "DUAL"
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_finding002_reproduced_at_old_threshold",
+      "reqs": [
+        "R6"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.185,
+      "measured": {
+        "old_threshold_deg": 2.0,
+        "old_failed_channel": "C",
+        "old_max_voted_error_deg": 3.24,
+        "configured_threshold_deg": 2.5,
+        "configured_failed_channel": "B",
+        "configured_max_voted_error_deg": 1.25
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_r9_reconfiguration_transient_baseline[unloaded]",
+      "reqs": [
+        "R9"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.2,
+      "measured": {
+        "load": "unloaded",
+        "step_mm": 4.04,
+        "overshoot_mm": 0.307,
+        "settle_s": 0.619
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_r9_reconfiguration_transient_baseline[rated]",
+      "reqs": [
+        "R9"
+      ],
+      "level": "System",
+      "status": "xfail",
+      "duration_s": 0.317,
+      "measured": {
+        "load": "rated",
+        "step_mm": 4.06,
+        "overshoot_mm": 0.922,
+        "settle_s": 1.164
+      },
+      "note": "RCA-001: integrator windup during rate saturation at rated load"
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_r9_corrective_action_verified[unloaded]",
+      "reqs": [
+        "R9"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.196,
+      "measured": {
+        "load": "unloaded",
+        "step_mm": 4.04,
+        "overshoot_mm": 0.259,
+        "settle_s": 0.527
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_r9_corrective_action_verified[rated]",
+      "reqs": [
+        "R9"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.185,
+      "measured": {
+        "load": "rated",
+        "step_mm": 4.03,
+        "overshoot_mm": 0.017,
+        "settle_s": 0.366
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_system.py::test_r10_command_limits_worst_case_inputs",
+      "reqs": [
+        "R10"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.006,
+      "measured": {
+        "max_cmd_mm": 22.0,
+        "max_rate_mm_s": 60.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm0]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm1]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm2]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm3]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm4]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r5_mid_value_select[perm5]",
+      "reqs": [
+        "R5"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r6_fail_after_persistence",
+      "reqs": [
+        "R6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {
+        "frames_to_latch": 5
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r6_threshold_has_margin_over_tolerance_stack",
+      "reqs": [
+        "R6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {
+        "margin_deg": 0.5
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r6_within_threshold_never_fails",
+      "reqs": [
+        "R6"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.001,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r7_single_spike_ignored",
+      "reqs": [
+        "R7"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r7_intermittent_spikes_reset_counter",
+      "reqs": [
+        "R7"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r8_dual_mode_average_and_annunciate",
+      "reqs": [
+        "R8"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r8_second_fault_in_dual_is_annunciated",
+      "reqs": [
+        "R8"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_b_voter.py::test_r8_invalid_channel_excluded",
+      "reqs": [
+        "R8"
+      ],
+      "level": "Unit",
+      "status": "passed",
+      "duration_s": 0.0,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_motor_channel_loss_hold[unloaded]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.073,
+      "measured": {
+        "load_n": 0.0,
+        "stall_after_loss_n": 3250,
+        "max_deviation_mm": 0.0,
+        "monitor_trip_after_s": null
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_motor_channel_loss_hold[rated]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "xfail",
+      "duration_s": 0.074,
+      "measured": {
+        "load_n": 4550.0,
+        "stall_after_loss_n": 3250,
+        "max_deviation_mm": 1.697,
+        "monitor_trip_after_s": 2.97
+      },
+      "note": "FINDING-003: one motor's stall force is below rated load; rod is back-driven"
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_if_position_is_lost_it_is_annunciated[unloaded]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.067,
+      "measured": {
+        "load": "unloaded",
+        "drifted_past_threshold": false,
+        "monitor_trip_after_s": null
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_if_position_is_lost_it_is_annunciated[rated]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.038,
+      "measured": {
+        "load": "rated",
+        "drifted_past_threshold": true,
+        "monitor_trip_after_s": 2.97
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_corrective_option_verified[unloaded]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.036,
+      "measured": {
+        "load": "unloaded",
+        "load_n": 0.0,
+        "stall_after_loss_n": 6500,
+        "max_deviation_mm": 0.0,
+        "monitor_trip_after_s": null
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r11_corrective_option_verified[rated]",
+      "reqs": [
+        "R11"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.04,
+      "measured": {
+        "load": "rated",
+        "load_n": 4550.0,
+        "stall_after_loss_n": 6500,
+        "max_deviation_mm": 0.0,
+        "monitor_trip_after_s": null
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[unloaded-near-retract]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.011,
+      "measured": {
+        "load": "unloaded",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[unloaded-mid]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.018,
+      "measured": {
+        "load": "unloaded",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[unloaded-near-extend]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.01,
+      "measured": {
+        "load": "unloaded",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[rated-near-retract]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.012,
+      "measured": {
+        "load": "rated",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[rated-mid]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.014,
+      "measured": {
+        "load": "rated",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_detected_and_drive_removed[rated-near-extend]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.009,
+      "measured": {
+        "load": "rated",
+        "jam_detect_s": 0.171
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_jam_with_stationary_command_is_latent",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.014,
+      "measured": {
+        "annunciated": false
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_on_rate_limited_move_at_rated_load",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.042,
+      "measured": {
+        "step_mm": 20.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_on_bandwidth_sine",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.018,
+      "measured": {},
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_across_part_b_faults[0pct_rated]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 3.406,
+      "measured": {
+        "load_n": 0,
+        "cases": 48,
+        "false_alarms": 0,
+        "worst_healthy_mm": 0.659,
+        "worst_case": "frozen-chB-maneuver",
+        "margin_mm": 0.341
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_across_part_b_faults[50pct_rated]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 3.79,
+      "measured": {
+        "load_n": 2275,
+        "cases": 48,
+        "false_alarms": 0,
+        "worst_healthy_mm": 0.659,
+        "worst_case": "frozen-chB-maneuver",
+        "margin_mm": 0.341
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_across_part_b_faults[75pct_rated]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 2.949,
+      "measured": {
+        "load_n": 3412,
+        "cases": 48,
+        "false_alarms": 0,
+        "worst_healthy_mm": 0.659,
+        "worst_case": "frozen-chB-maneuver",
+        "margin_mm": 0.341
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_across_part_b_faults[100pct_rated]",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 3.12,
+      "measured": {
+        "load_n": 4550,
+        "cases": 48,
+        "false_alarms": 0,
+        "worst_healthy_mm": 0.659,
+        "worst_case": "frozen-chB-maneuver",
+        "margin_mm": 0.341
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r12_no_false_alarm_baseline_actuator",
+      "reqs": [
+        "R12"
+      ],
+      "level": "System",
+      "status": "xfail",
+      "duration_s": 3.167,
+      "measured": {
+        "load_n": 3412,
+        "false_alarms": 2,
+        "worst_healthy_mm": 4.895,
+        "worst_case": "drift-chA-maneuver"
+      },
+      "note": "FINDING-005: monitor needs the RCA-001 anti-windup fix; baseline windup gives false jam alarms"
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_healthy_lanes_share_load_with_equalization",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.376,
+      "measured": {
+        "max_fight_n": 300
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_without_equalization_healthy_lanes_fight_and_trip",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.002,
+      "measured": {
+        "max_fight_n": 8454,
+        "healthy_lane_disengaged_at_s": {
+          "0": 0.67
+        }
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneA+2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.45,
+      "measured": {
+        "disengaged": {
+          "0": 0.2
+        },
+        "peak_surface_mm": 0.83,
+        "final_surface_mm": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneA-2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.552,
+      "measured": {
+        "disengaged": {
+          "0": 0.2
+        },
+        "peak_surface_mm": 0.74,
+        "final_surface_mm": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneA+5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.472,
+      "measured": {
+        "disengaged": {
+          "0": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneA-5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.562,
+      "measured": {
+        "disengaged": {
+          "0": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneA+10mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.453,
+      "measured": {
+        "disengaged": {
+          "0": 0.2
+        },
+        "peak_surface_mm": 3.69,
+        "final_surface_mm": 0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneB+2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.405,
+      "measured": {
+        "disengaged": {
+          "1": 0.2
+        },
+        "peak_surface_mm": 0.9,
+        "final_surface_mm": -0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneB-2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.401,
+      "measured": {
+        "disengaged": {
+          "1": 0.2
+        },
+        "peak_surface_mm": 0.74,
+        "final_surface_mm": -0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneB+5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.405,
+      "measured": {
+        "disengaged": {
+          "1": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": -0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneB-5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.412,
+      "measured": {
+        "disengaged": {
+          "1": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": -0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneB+10mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.473,
+      "measured": {
+        "disengaged": {
+          "1": 0.2
+        },
+        "peak_surface_mm": 3.69,
+        "final_surface_mm": -0.0
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneC+2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.391,
+      "measured": {
+        "disengaged": {
+          "2": 0.2
+        },
+        "peak_surface_mm": 0.98,
+        "final_surface_mm": -0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneC-2mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.398,
+      "measured": {
+        "disengaged": {
+          "2": 0.2
+        },
+        "peak_surface_mm": 0.82,
+        "final_surface_mm": -0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneC+5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.382,
+      "measured": {
+        "disengaged": {
+          "2": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": -0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneC-5mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.39,
+      "measured": {
+        "disengaged": {
+          "2": 0.2
+        },
+        "peak_surface_mm": 1.85,
+        "final_surface_mm": -0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_faulty_lane_disengaged[laneC+10mm]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.389,
+      "measured": {
+        "disengaged": {
+          "2": 0.2
+        },
+        "peak_surface_mm": 3.69,
+        "final_surface_mm": -0.1
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[0.5]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.542,
+      "measured": {
+        "worst_undetected_surface_mm": 0.167
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[1.0]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.538,
+      "measured": {
+        "worst_undetected_surface_mm": 0.333
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[1.5]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.395,
+      "measured": {
+        "worst_undetected_surface_mm": 0.5
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[-1.5]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.425,
+      "measured": {
+        "worst_undetected_surface_mm": 0.5
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[1.6]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.57,
+      "measured": {
+        "worst_undetected_surface_mm": 0.533
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_undetected_lane_fault_stays_small[-1.6]",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 1.4,
+      "measured": {
+        "worst_undetected_surface_mm": 0.533
+      },
+      "note": ""
+    },
+    {
+      "test": "tests/test_part_c_actuator_faults.py::test_r13_guard_monitor_isolates_only_the_largest_outlier",
+      "reqs": [
+        "R13"
+      ],
+      "level": "System",
+      "status": "passed",
+      "duration_s": 0.544,
+      "measured": {
+        "old_logic_lanes_disengaged": 3
+      },
+      "note": ""
+    }
+  ]
+}
